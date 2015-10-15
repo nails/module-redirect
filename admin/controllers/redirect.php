@@ -13,9 +13,9 @@
 namespace Nails\Admin\Redirect;
 
 use Nails\Factory;
-use Nails\Admin\Controller\Base;
+use Nails\Redirect\Controller\BaseAdmin;
 
-class Redirect extends Base
+class Redirect extends BaseAdmin
 {
     /**
      * Announces this controller's navGroups
@@ -126,6 +126,7 @@ class Redirect extends Base
 
         // --------------------------------------------------------------------------
 
+        $this->asset->load('nails.admin.redirect.min.js', 'NAILS');
         \Nails\Admin\Helper::loadView('index');
     }
 }

@@ -1,58 +1,4 @@
-<?php
-
-    $this->asset->load('mustache.js/mustache.js', 'NAILS-BOWER');
-    $this->asset->inline('
-
-        var template = \'<tr><td><input type="text" name="old[]" value="" placeholder="/old/slug/here"></td><td><input type="text" name="new[]" value="" placeholder="http://www.newurl.com/new/slug/here"></td><td><select name="type[]" class="select2"><option selected="selected" value="301">301 - Moved Permanently</option><option value="302">302 - Moved Temporarily</option></select></td><td style="text-align:center;"><a href="#" class="delete"><span class="fa fa-minus-circle"></span></td></tr>\';
-        var html = Mustache.to_html(template);
-
-        $(\'#add\').on(\'click\', function(e){
-            $(\'.redirect-table tbody tr:last\').before(html);
-            $(\'.select2\').select2(\'destroy\');
-            $(\'.select2\').select2();
-            e.preventDefault();
-        });
-
-        $(document).on(\'click\', \'.delete\',  function(e){
-            $(e.target).closest(\'tr\').remove();
-            e.preventDefault();
-        });
-
-
-    ', 'JS');
-
-?>
-
-<style type="text/css">
-
-    table input[type=text] {
-        width: 100%;
-    }
-
-    .add-row {
-        padding: 0;
-    }
-
-    #add {
-        display: block;
-        text-align: center;
-        font-size: 110%;
-        line-height: 300%;
-        font-weight: bold;
-    }
-
-    #add:hover {
-        background: #007F06;
-        color: #fff;
-    }
-
-    .delete {
-        font-size: 140%;
-    }
-
-</style>
-
-<div class="group-redirects browse">
+<div class="group-redirect browse">
     <p>
         <?=lang('redirects_index_intro')?>
     </p>
@@ -118,13 +64,6 @@
                         $count++;
                     }
 
-                } else {
-
-                    ?>
-                    <tr>
-                        <td colspan="4" class="no-data"><?=lang('redirects_index_no_redirects')?></td>
-                    </tr>
-                    <?php
                 }
 
                 ?>
@@ -136,9 +75,30 @@
             </tbody>
         </table>
         <br>
-        <button type="submit" class="awesome pull-right">
+        <button type="submit" class="btn btn-primary">
             Save Changes
         </button>
     <?=form_close()?>
     </div>
 </div>
+<script type="text/template" id="template-row">
+    <tr>
+        <td>
+            <input type="text" name="old[]" value="" placeholder="/old/slug/here">
+        </td>
+        <td>
+            <input type="text" name="new[]" value="" placeholder="http://www.newurl.com/new/slug/here">
+        </td>
+        <td>
+            <select name="type[]" class="select2">
+                <option selected="selected" value="301">301 - Moved Permanently</option>
+                <option value="302">302 - Moved Temporarily</option>
+            </select>
+        </td>
+        <td class="text-center;">
+            <a href="#" class="delete">
+                <span class="fa fa-minus-circle"></span>
+            </a>
+        </td>
+    </tr>
+</script>

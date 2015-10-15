@@ -30,16 +30,13 @@ class Redirect extends Base
 
     public function insertBatch($aData)
     {
-
-        return ($this->db->insert_batch($this->table, $aData));
-
+        return $this->db->insert_batch($this->table, $aData);
     }
 
     // --------------------------------------------------------------------------
 
     public function truncateAll()
     {
-
-        return ($this->db->truncate($this->table));
+        return $this->db->truncate($this->table);
     }
 }
