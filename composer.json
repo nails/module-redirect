@@ -1,0 +1,48 @@
+{
+    "name": "nailsapp/module-redirect",
+    "keywords": ["Nails", "Shed Collective", "CodeIgniter", "Redirect Module"],
+    "homepage": "http://nailsapp.co.uk/modules/redirect",
+    "description": "This is the \"Redirect\" module for Nails.",
+    "license": "MIT",
+    "authors":
+    [
+        {
+            "name": "Pablo de la Pena",
+            "email": "p@nailsapp.co.uk",
+            "homepage": "http://nailsapp.co.uk",
+            "role": "Developer"
+        },
+        {
+            "name": "Gary Duncan",
+            "email": "g@nailsapp.co.uk",
+            "homepage": "http://nailsapp.co.uk",
+            "role": "Developer"
+        }
+    ],
+    "support":
+    {
+        "email": "hello@nailsapp.co.uk"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require":
+    {
+        "nailsapp/common": "dev-develop"
+    },
+    "require-dev":
+    {
+        "phpunit/phpunit": "4.*"
+    },
+    "autoload":
+    {
+        "psr-4": {"Nails\\Redirect\\": "src/"}
+    },
+    "extra":
+    {
+        "nails" :
+        {
+            "moduleName": "redirect",
+            "type": "module"
+        }
+    }
+}
