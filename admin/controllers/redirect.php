@@ -13,6 +13,7 @@
 namespace Nails\Admin\Redirect;
 
 use Nails\Factory;
+use Nails\Admin\Helper;
 use Nails\Redirect\Controller\BaseAdmin;
 
 class Redirect extends BaseAdmin
@@ -127,6 +128,6 @@ class Redirect extends BaseAdmin
         // --------------------------------------------------------------------------
 
         $this->asset->load('nails.admin.redirect.min.js', 'NAILS');
-        \Nails\Admin\Helper::loadView('index');
+        Helper::loadView('index');
     }
 }
