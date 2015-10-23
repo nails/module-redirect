@@ -77,48 +77,72 @@ class Redirect extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
+        $oRoutesModel   = Factory::model('Routes');
         $oRedirectModel = Factory::model('Redirect', 'nailsapp/module-redirect');
 
         // --------------------------------------------------------------------------
 
         if ($this->input->post()) {
 
-            $old = $this->input->post('old');
-            $new = $this->input->post('new');
-            $type = $this->input->post('type');
+            $aOld  = $this->input->post('old_url');
+            $aNew  = $this->input->post('new_url');
+            $aType = $this->input->post('type');
 
-            //  TODO: Validation and re-setting of values
+            $aCombined = array();
+            for ($i = 0; $i < count($aOld); $i++) {
 
-            //  Check we don't have any blank entries in our post arrays, then update if so
-            if (count($old) == count(array_filter($old)) && count($new) == count(array_filter($new))) {
-
-                $aCombined = array();
-                for ($iCount = 0; $iCount < count($old); $iCount++) {
-
+                if ($aOld[$i] || $aNew[$i] || $aType[$i]) {
                     $aCombined[] = array(
-                        'old' => $old[$iCount],
-                        'new' => $new[$iCount],
-                        'type' => $type[$iCount]
+                        'old_url' => trim($aOld[$i]),
+                        'new_url' => trim($aNew[$i]),
+                        'type'    => $aType[$i]
                     );
                 }
+            }
 
-                // --------------------------------------------------------------------------
+            //  Check we don't have any blank entries in our post arrays, then update if so
+            if (!$aOld && !$aNew && !$aType) {
 
-                if ($oRedirectModel->truncateAll() && $oRedirectModel->insertBatch($aCombined)) {
+                if ($oRedirectModel->truncateAll()) {
 
-                    $this->session->set_flashdata('success', lang('redirects_edit_ok'));
+                    $this->data['success'] = lang('redirects_edit_ok');
+                    $oRoutesModel->update();
+
+                } else {
+
+                    $this->data['error'] = 'Failed to remove redirects. ' . $oRedirectModel->last_error();
                 }
 
             } else {
 
-                // TODO: Error handling
-                $this->session->set_flashdata('error', lang('redirects_edit_fail_empty_rows'));
+                $bOkOld  = count($aOld) == count(array_filter($aOld));
+                $bOkNew  = count($aNew) == count(array_filter($aNew));
+                $bOkType = count($aType) == count(array_filter($aType));
+
+                if ($bOkOld && $bOkNew && $bOkType) {
+
+                    if ($oRedirectModel->truncateAll() && $oRedirectModel->insertBatch($aCombined)) {
+
+                        $this->data['success'] = lang('redirects_edit_ok');
+                        $oRoutesModel->update();
+
+                    } else {
+
+                        $this->data['error'] = 'Failed to save redirects. ' . $oRedirectModel->last_error();
+                    }
+
+                } else {
+
+                    $this->data['error'] = lang('redirects_edit_fail_empty_rows');
+                }
             }
+
+            $aRedirects = $aCombined;
+
+        } else {
+
+            $aRedirects = $oRedirectModel->get_all();
         }
-
-        // --------------------------------------------------------------------------
-
-        $this->data['redirects'] = $oRedirectModel->get_all();
 
         // --------------------------------------------------------------------------
 
@@ -127,7 +151,12 @@ class Redirect extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
+        $this->asset->load('knockout/dist/knockout.js', 'NAILS-BOWER');
         $this->asset->load('nails.admin.redirect.min.js', 'NAILS');
-        Helper::loadView('index');
+        $this->asset->inline(
+            'ko.applyBindings(new redirects(' . json_encode($aRedirects) . '));',
+            'JS'
+        );
+        \Nails\Admin\Helper::loadView('index');
     }
 }

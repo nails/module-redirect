@@ -3,7 +3,11 @@
 return array(
     'models' => array(
         'Redirect' => function () {
-            return new \Nails\Redirect\Model\Redirect();
+            if (class_exists('\App\Redirect\Model\Redirect')) {
+                return new \App\Redirect\Model\Redirect();
+            } else {
+                return new \Nails\Redirect\Model\Redirect();
+            }
         }
     )
 );
