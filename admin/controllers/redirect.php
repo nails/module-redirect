@@ -26,7 +26,9 @@ class Redirect extends BaseAdmin
     {
         if (userHasPermission('admin:redirect:redirect:manage')) {
 
-            $navGroup = new \Nails\Admin\Nav('Redirects', 'fa-arrow-circle-o-right');
+            $navGroup = Factory::factory('Nav', 'nailsapp/module-admin');
+            $navGroup->setLabel('Redirects');
+            $navGroup->setIcon('fa-arrow-circle-o-right');
             $navGroup->addAction('Manage Redirects');
 
             return $navGroup;
@@ -157,6 +159,6 @@ class Redirect extends BaseAdmin
             'ko.applyBindings(new redirects(' . json_encode($aRedirects) . '));',
             'JS'
         );
-        \Nails\Admin\Helper::loadView('index');
+        echo adminHelper('loadView', 'index');
     }
 }
