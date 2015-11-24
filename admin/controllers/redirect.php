@@ -112,7 +112,7 @@ class Redirect extends BaseAdmin
 
                 } else {
 
-                    $this->data['error'] = 'Failed to remove redirects. ' . $oRedirectModel->last_error();
+                    $this->data['error'] = 'Failed to remove redirects. ' . $oRedirectModel->lastError();
                 }
 
             } else {
@@ -130,7 +130,7 @@ class Redirect extends BaseAdmin
 
                     } else {
 
-                        $this->data['error'] = 'Failed to save redirects. ' . $oRedirectModel->last_error();
+                        $this->data['error'] = 'Failed to save redirects. ' . $oRedirectModel->lastError();
                     }
 
                 } else {
