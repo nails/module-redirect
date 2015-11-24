@@ -143,7 +143,7 @@ class Redirect extends BaseAdmin
 
         } else {
 
-            $aRedirects = $oRedirectModel->get_all();
+            $aRedirects = $oRedirectModel->getAll();
         }
 
         // --------------------------------------------------------------------------

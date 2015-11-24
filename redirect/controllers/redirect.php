@@ -8,7 +8,7 @@ class Redirect extends Base
     public function index()
     {
         $oRedirectModel = Factory::model('Redirect', 'nailsapp/module-redirect');
-        $oRedirect      = $oRedirectModel->get_by_id($this->uri->rsegment(3));
+        $oRedirect      = $oRedirectModel->getById($this->uri->rsegment(3));
 
         if (empty($oRedirect)) {
 

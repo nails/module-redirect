@@ -24,7 +24,7 @@ class Routes
     {
         $aRoutes        = array();
         $oRedirectModel = Factory::model('Redirect', 'nailsapp/module-redirect');
-        $aRedirects     = $oRedirectModel->get_all();
+        $aRedirects     = $oRedirectModel->getAll();
 
         foreach ($aRedirects as $oRedirect) {
 
