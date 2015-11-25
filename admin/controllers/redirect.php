@@ -26,12 +26,12 @@ class Redirect extends BaseAdmin
     {
         if (userHasPermission('admin:redirect:redirect:manage')) {
 
-            $navGroup = Factory::factory('Nav', 'nailsapp/module-admin');
-            $navGroup->setLabel('Redirects');
-            $navGroup->setIcon('fa-arrow-circle-o-right');
-            $navGroup->addAction('Manage Redirects');
+            $oNavGroup = Factory::factory('Nav', 'nailsapp/module-admin');
+            $oNavGroup->setLabel('Redirects');
+            $oNavGroup->setIcon('fa-arrow-circle-o-right');
+            $oNavGroup->addAction('Manage Redirects');
 
-            return $navGroup;
+            return $oNavGroup;
         }
     }
 
