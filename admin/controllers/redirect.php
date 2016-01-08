@@ -153,7 +153,6 @@ class Redirect extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $this->asset->library('KNOCKOUT');
         $this->asset->load('nails.admin.redirect.min.js', 'NAILS');
         $this->asset->inline(
             'ko.applyBindings(new redirects(' . json_encode($aRedirects) . '));',
