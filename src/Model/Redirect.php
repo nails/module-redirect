@@ -22,12 +22,14 @@ class Redirect extends Base
     public function __construct()
     {
         parent::__construct();
-        $this->table = NAILS_DB_PREFIX . 'redirect';
-        $this->tablePrefix = 't';
+        $this->table             = NAILS_DB_PREFIX . 'redirect';
+        $this->tablePrefix       = 't';
+        $this->defaultSortColumn = null;
     }
 
     // --------------------------------------------------------------------------
 
+    //  @todo base mdoel should provide this functionality
     public function insertBatch($aData)
     {
         return $this->db->insert_batch($this->table, $aData);
@@ -35,6 +37,7 @@ class Redirect extends Base
 
     // --------------------------------------------------------------------------
 
+    //  @todo base mdoel should provide this functionality (maybe, awfully destructive)
     public function truncateAll()
     {
         return $this->db->truncate($this->table);
