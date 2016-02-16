@@ -28,7 +28,11 @@ class Routes
 
         foreach ($aRedirects as $oRedirect) {
 
-            $aRoutes[$oRedirect->old_url] = 'redirect/redirect/index/' . $oRedirect->id;
+            $sUrl = site_url($oRedirect->old_url);
+            $sUrl = preg_replace('/^' . preg_quote(BASE_URL, '/') . '/', '', $sUrl);
+            $sUrl = preg_replace('/^' . preg_quote(SECURE_BASE_URL, '/') . '/', '', $sUrl);
+
+            $aRoutes[$sUrl] = 'redirect/redirect/index/' . $oRedirect->id;
         }
 
         return $aRoutes;

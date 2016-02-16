@@ -1,9 +1,8 @@
 <?php
 
 use Nails\Factory;
-use Nails\Common\Controller\Base;
 
-class Redirect extends Base
+class Redirect extends NAILS_Controller
 {
     public function index()
     {
@@ -11,7 +10,6 @@ class Redirect extends Base
         $oRedirect      = $oRedirectModel->getById($this->uri->rsegment(3));
 
         if (empty($oRedirect)) {
-
             show_404();
         }
 
