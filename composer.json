@@ -42,7 +42,8 @@
         "nails" :
         {
             "moduleName": "redirect",
-            "type": "module"
+            "type": "module",
+            "namespace": "Nails\\Redirect\\"
         }
     }
 }
