@@ -13,14 +13,13 @@
 namespace Nails\Admin\Redirect;
 
 use Nails\Factory;
-use Nails\Admin\Helper;
 use Nails\Redirect\Controller\BaseAdmin;
 
 class Redirect extends BaseAdmin
 {
     /**
      * Announces this controller's navGroups
-     * @return stdClass
+     * @return \stdClass
      */
     public static function announce()
     {
@@ -43,11 +42,11 @@ class Redirect extends BaseAdmin
      */
     public static function permissions()
     {
-        $permissions = parent::permissions();
+        $aPermissions = parent::permissions();
 
-        $permissions['manage'] = 'Can manage redirects';
+        $aPermissions['manage'] = 'Can manage redirects';
 
-        return $permissions;
+        return $aPermissions;
     }
 
     // --------------------------------------------------------------------------
@@ -73,31 +72,36 @@ class Redirect extends BaseAdmin
     public function index()
     {
         if (!userHasPermission('admin:redirect:redirect:manage')) {
-
             unauthorised();
         }
 
         // --------------------------------------------------------------------------
 
+        $oInput         = Factory::service('Input');
         $oRoutesModel   = Factory::model('Routes');
         $oRedirectModel = Factory::model('Redirect', 'nailsapp/module-redirect');
 
         // --------------------------------------------------------------------------
 
-        if ($this->input->post()) {
+        if ($oInput->post()) {
 
-            $aOld  = $this->input->post('old_url');
-            $aNew  = $this->input->post('new_url');
-            $aType = $this->input->post('type');
+            $aOld  = $oInput->post('old_url');
+            $aNew  = $oInput->post('new_url');
+            $aType = $oInput->post('type');
+            $oNow  = Factory::factory('DateTime');
+            $sNow  = $oNow->format('Y-m-d H:i:s');
 
             $aCombined = array();
             for ($i = 0; $i < count($aOld); $i++) {
-
                 if ($aOld[$i] || $aNew[$i] || $aType[$i]) {
                     $aCombined[] = array(
-                        'old_url' => trim($aOld[$i]),
-                        'new_url' => trim($aNew[$i]),
-                        'type'    => $aType[$i]
+                        'old_url'     => trim($aOld[$i]),
+                        'new_url'     => trim($aNew[$i]),
+                        'type'        => $aType[$i],
+                        'created'     => $sNow,
+                        'created_by'  => activeUser('id') ?: null,
+                        'modified'    => $sNow,
+                        'modified_by' => activeUser('id') ?: null,
                     );
                 }
             }
@@ -153,8 +157,9 @@ class Redirect extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $this->asset->load('admin.redirect.min.js', 'nailsapp/module-redirect');
-        $this->asset->inline(
+        $oAsset = Factory::service('Asset');
+        $oAsset->load('admin.redirect.min.js', 'nailsapp/module-redirect');
+        $oAsset->inline(
             'ko.applyBindings(new redirects(' . json_encode($aRedirects) . '));',
             'JS'
         );
