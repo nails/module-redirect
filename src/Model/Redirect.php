@@ -23,7 +23,7 @@ class Redirect extends Base
     {
         parent::__construct();
         $this->table             = NAILS_DB_PREFIX . 'redirect';
-        $this->tablePrefix       = 't';
+        $this->tableAlias       = 't';
         $this->defaultSortColumn = null;
     }
 
