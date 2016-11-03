@@ -1,8 +1,9 @@
 <?php
 
 use Nails\Factory;
+use App\Controller\Base;
 
-class Redirect extends NAILS_Controller
+class Redirect extends Base
 {
     public function index()
     {
