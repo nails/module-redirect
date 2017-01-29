@@ -18,11 +18,12 @@ class Routes
 {
     /**
      * Returns an array of routes for this module
+     *
      * @return array
      */
     public function getRoutes()
     {
-        $aRoutes        = array();
+        $aRoutes        = [];
         $oRedirectModel = Factory::model('Redirect', 'nailsapp/module-redirect');
         $aRedirects     = $oRedirectModel->getAll();
 
