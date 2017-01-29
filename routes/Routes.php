@@ -12,9 +12,10 @@
 
 namespace Nails\Routes\Redirect;
 
+use Nails\Common\Model\BaseRoutes;
 use Nails\Factory;
 
-class Routes
+class Routes extends BaseRoutes
 {
     /**
      * Returns an array of routes for this module
