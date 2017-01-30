@@ -14,6 +14,7 @@ namespace Nails\Routes\Redirect;
 
 use Nails\Common\Model\BaseRoutes;
 use Nails\Factory;
+use PDO;
 
 class Routes extends BaseRoutes
 {
@@ -24,17 +25,21 @@ class Routes extends BaseRoutes
      */
     public function getRoutes()
     {
-        $aRoutes        = [];
+        $oDb            = Factory::service('ConsoleDatabase', 'nailsapp/module-console');
         $oRedirectModel = Factory::model('Redirect', 'nailsapp/module-redirect');
-        $aRedirects     = $oRedirectModel->getAll();
+        $aRoutes        = [];
 
-        foreach ($aRedirects as $oRedirect) {
+        $oRedirects = $oDb->query(
+            'SELECT id, old_url FROM ' . $oRedirectModel->getTableName()
+        );
 
-            $sUrl = site_url($oRedirect->old_url);
+        while ($oRow = $oRedirects->fetch(PDO::FETCH_OBJ)) {
+
+            $sUrl = preg_replace('/^\//', '', $oRow->old_url);
             $sUrl = preg_replace('/^' . preg_quote(BASE_URL, '/') . '/', '', $sUrl);
             $sUrl = preg_replace('/^' . preg_quote(SECURE_BASE_URL, '/') . '/', '', $sUrl);
 
-            $aRoutes[$sUrl] = 'redirect/redirect/index/' . $oRedirect->id;
+            $aRoutes[$sUrl] = 'redirect/redirect/index/' . $oRow->id;
         }
 
         return $aRoutes;

@@ -24,11 +24,11 @@
                     </td>
                     <td class="type">
                         <select name="type[]" data-bind="
-                            select2,
                             options: $root.redirectTypes,
                             optionsValue: 'code',
                             optionsText: 'label',
-                            value: type"></select>
+                            value: type,
+                            select2"></select>
                     </td>
                     <td class="remove text-center">
                         <a href="#" data-bind="click: $root.removeRedirect">
