@@ -42,10 +42,8 @@ class Redirect extends BaseAdmin
      */
     public static function permissions()
     {
-        $aPermissions = parent::permissions();
-
+        $aPermissions           = parent::permissions();
         $aPermissions['manage'] = 'Can manage redirects';
-
         return $aPermissions;
     }
 
@@ -57,9 +55,6 @@ class Redirect extends BaseAdmin
     public function __construct()
     {
         parent::__construct();
-
-        // --------------------------------------------------------------------------
-
         $this->lang->load('admin_redirect');
     }
 
@@ -91,10 +86,10 @@ class Redirect extends BaseAdmin
             $oNow  = Factory::factory('DateTime');
             $sNow  = $oNow->format('Y-m-d H:i:s');
 
-            $aCombined = array();
+            $aCombined = [];
             for ($i = 0; $i < count($aOld); $i++) {
                 if ($aOld[$i] || $aNew[$i] || $aType[$i]) {
-                    $aCombined[] = array(
+                    $aCombined[] = [
                         'old_url'     => trim($aOld[$i]),
                         'new_url'     => trim($aNew[$i]),
                         'type'        => $aType[$i],
@@ -102,7 +97,7 @@ class Redirect extends BaseAdmin
                         'created_by'  => activeUser('id') ?: null,
                         'modified'    => $sNow,
                         'modified_by' => activeUser('id') ?: null,
-                    );
+                    ];
                 }
             }
 
@@ -115,7 +110,6 @@ class Redirect extends BaseAdmin
                     $oRoutesModel->update();
 
                 } else {
-
                     $this->data['error'] = 'Failed to remove redirects. ' . $oRedirectModel->lastError();
                 }
 
@@ -128,17 +122,13 @@ class Redirect extends BaseAdmin
                 if ($bOkOld && $bOkNew && $bOkType) {
 
                     if ($oRedirectModel->truncateAll() && $oRedirectModel->insertBatch($aCombined)) {
-
                         $this->data['success'] = lang('redirects_edit_ok');
                         $oRoutesModel->update();
-
                     } else {
-
                         $this->data['error'] = 'Failed to save redirects. ' . $oRedirectModel->lastError();
                     }
 
                 } else {
-
                     $this->data['error'] = lang('redirects_edit_fail_empty_rows');
                 }
             }
