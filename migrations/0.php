@@ -20,14 +20,14 @@ class Migration0 extends Base
     {
         $this->query("
             CREATE TABLE `{{NAILS_DB_PREFIX}}redirect` (
-                `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                `old_url` varchar(255) DEFAULT NULL,
-                `new_url` varchar(255) DEFAULT NULL,
-                `type` enum('301','302') DEFAULT '301',
-                `created` datetime NOT NULL,
-                `created_by` int(11) unsigned DEFAULT NULL,
-                `modified` datetime NOT NULL,
-                `modified_by` int(11) unsigned DEFAULT NULL,
+                `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `old_url` VARCHAR(255) DEFAULT NULL,
+                `new_url` VARCHAR(255) DEFAULT NULL,
+                `type` ENUM('301','302') DEFAULT '301',
+                `created` DATETIME NOT NULL,
+                `created_by` INT(11) UNSIGNED DEFAULT NULL,
+                `modified` DATETIME NOT NULL,
+                `modified_by` INT(11) UNSIGNED DEFAULT NULL,
                 PRIMARY KEY (`id`),
                 KEY `created_by` (`created_by`),
                 KEY `modified_by` (`modified_by`),

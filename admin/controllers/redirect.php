@@ -12,147 +12,115 @@
 
 namespace Nails\Admin\Redirect;
 
+use Nails\Admin\Controller\DefaultController;
+use Nails\Admin\Helper;
 use Nails\Factory;
-use Nails\Redirect\Controller\BaseAdmin;
 
-class Redirect extends BaseAdmin
+class Redirect extends DefaultController
 {
-    /**
-     * Announces this controller's navGroups
-     * @return \stdClass
-     */
-    public static function announce()
-    {
-        if (userHasPermission('admin:redirect:redirect:manage')) {
-
-            $oNavGroup = Factory::factory('Nav', 'nailsapp/module-admin');
-            $oNavGroup->setLabel('Redirects');
-            $oNavGroup->setIcon('fa-arrow-circle-o-right');
-            $oNavGroup->addAction('Manage Redirects');
-
-            return $oNavGroup;
-        }
-    }
-
-    // --------------------------------------------------------------------------
-
-    /**
-     * Returns an array of extra permissions for this controller
-     * @return array
-     */
-    public static function permissions()
-    {
-        $aPermissions           = parent::permissions();
-        $aPermissions['manage'] = 'Can manage redirects';
-        return $aPermissions;
-    }
+    const CONFIG_MODEL_NAME           = 'Redirect';
+    const CONFIG_MODEL_PROVIDER       = 'nailsapp/module-redirect';
+    const CONFIG_SORT_OPTIONS         = [
+        'created'  => 'Created',
+        'modified' => 'Modified',
+        'old_url'  => 'Old URL',
+        'new_url'  => 'New URL',
+    ];
+    const CONFIG_INDEX_FIELDS         = [
+        'old_url'  => 'Old URL',
+        'new_url'  => 'New URL',
+        'created'  => 'Created',
+        'modified' => 'Modified',
+    ];
+    const CONFIG_INDEX_HEADER_BUTTONS = [
+        ['admin/redirect/redirect/batch', 'Batch Edit', 'default'],
+    ];
 
     // --------------------------------------------------------------------------
 
-    /**
-     * Constructs the controller
-     */
-    public function __construct()
+    public function batch()
     {
-        parent::__construct();
-        $this->lang->load('admin_redirect');
-    }
-
-    // --------------------------------------------------------------------------
-
-    /**
-     * Browse redirects
-     * @return void
-     */
-    public function index()
-    {
-        if (!userHasPermission('admin:redirect:redirect:manage')) {
-            unauthorised();
-        }
-
-        // --------------------------------------------------------------------------
-
-        $oInput         = Factory::service('Input');
-        $oRoutesModel   = Factory::model('Routes');
-        $oRedirectModel = Factory::model('Redirect', 'nailsapp/module-redirect');
-
-        // --------------------------------------------------------------------------
+        $oInput = Factory::service('Input');
+        $oModel = Factory::model('Redirect', 'nailsapp/module-redirect');
 
         if ($oInput->post()) {
+            try {
 
-            $aOld  = $oInput->post('old_url');
-            $aNew  = $oInput->post('new_url');
-            $aType = $oInput->post('type');
-            $oNow  = Factory::factory('DateTime');
-            $sNow  = $oNow->format('Y-m-d H:i:s');
-
-            $aCombined = [];
-            for ($i = 0; $i < count($aOld); $i++) {
-                if ($aOld[$i] || $aNew[$i] || $aType[$i]) {
-                    $aCombined[] = [
-                        'old_url'     => trim($aOld[$i]),
-                        'new_url'     => trim($aNew[$i]),
-                        'type'        => $aType[$i],
-                        'created'     => $sNow,
-                        'created_by'  => activeUser('id') ?: null,
-                        'modified'    => $sNow,
-                        'modified_by' => activeUser('id') ?: null,
-                    ];
+                $oFormValidation = Factory::service('FormValidation');
+                $oFormValidation->set_rules('old', '', 'required');
+                $oFormValidation->set_rules('new', '', 'required');
+                $oFormValidation->set_rules('type', '', 'required');
+                if (!$oFormValidation->run()) {
+                    throw new \Exception('All fields are required.');
                 }
+
+                $aOldUrls      = explode("\n", trim($oInput->post('old')));
+                $iCountOldUrls = count($aOldUrls);
+                $aNewUrls      = explode("\n", trim($oInput->post('new')));
+                $iCountNewUrls = count($aNewUrls);
+                $aType         = explode("\n", trim($oInput->post('type')));
+                $iCountType    = count($aType);
+
+                if ($iCountOldUrls !== $iCountNewUrls && $iCountOldUrls !== $iCountType) {
+                    throw new \Exception('There must be an equal number of lines in each field.');
+                }
+
+                $aAllowedTypes = [301, 302];
+                $aInvalidTypes = array_diff(array_unique($aType), $aAllowedTypes);
+                if (!empty($aInvalidTypes)) {
+                    throw new \Exception('The following redirect types are invalid: ' . implode(', ', $aInvalidTypes));
+                }
+
+                $aRedirects = [];
+                for ($i = 0; $i < $iCountOldUrls; $i++) {
+                    $aRedirects[$aOldUrls[$i]] = [$aNewUrls[$i], $aType[$i]];
+                }
+
+                $oModel->truncate();
+                foreach ($aRedirects as $sOldUrl => $aNewUrl) {
+                    $oModel->create(['old_url' => $sOldUrl, 'new_url' => $aNewUrl[0], 'type' => $aNewUrl[1]]);
+                }
+
+                $oRoutesModel = Factory::model('Routes');
+                $oRoutesModel->update();
+
+                $oSession = Factory::service('Session', 'nailsapp/module-auth');
+                $oSession->setFlashData('success', 'Redirects updated successfully.');
+                redirect('admin/redirect/redirect/batch');
+
+            } catch (\Exception $e) {
+                $this->data['error'] = $e->getMessage();
             }
-
-            //  Check we don't have any blank entries in our post arrays, then update if so
-            if (!$aOld && !$aNew && !$aType) {
-
-                if ($oRedirectModel->truncateAll()) {
-
-                    $this->data['success'] = lang('redirects_edit_ok');
-                    $oRoutesModel->update();
-
-                } else {
-                    $this->data['error'] = 'Failed to remove redirects. ' . $oRedirectModel->lastError();
-                }
-
-            } else {
-
-                $bOkOld  = count($aOld) == count(array_filter($aOld));
-                $bOkNew  = count($aNew) == count(array_filter($aNew));
-                $bOkType = count($aType) == count(array_filter($aType));
-
-                if ($bOkOld && $bOkNew && $bOkType) {
-
-                    if ($oRedirectModel->truncateAll() && $oRedirectModel->insertBatch($aCombined)) {
-                        $this->data['success'] = lang('redirects_edit_ok');
-                        $oRoutesModel->update();
-                    } else {
-                        $this->data['error'] = 'Failed to save redirects. ' . $oRedirectModel->lastError();
-                    }
-
-                } else {
-                    $this->data['error'] = lang('redirects_edit_fail_empty_rows');
-                }
-            }
-
-            $aRedirects = $aCombined;
-
-        } else {
-
-            $aRedirects = $oRedirectModel->getAll();
         }
 
-        // --------------------------------------------------------------------------
+        $aRedirects = $oModel->getAll();
+        $aOldUrls   = [];
+        $aNewUrls   = [];
+        $aTypes     = [];
+        foreach ($aRedirects as $oRedirect) {
+            $aOldUrls[] = $oRedirect->old_url;
+            $aNewUrls[] = $oRedirect->new_url;
+            $aTypes[]   = $oRedirect->type;
+        }
 
-        //  Set method info
-        $this->data['page']->title = lang('redirects_index_title');
-
-        // --------------------------------------------------------------------------
+        $this->data['sOldUrls'] = implode("\n", $aOldUrls);
+        $this->data['sNewUrls'] = implode("\n", $aNewUrls);
+        $this->data['sTypes']   = implode("\n", $aTypes);
 
         $oAsset = Factory::service('Asset');
-        $oAsset->load('admin.redirect.min.js', 'nailsapp/module-redirect');
-        $oAsset->inline(
-            'ko.applyBindings(new redirects(' . json_encode($aRedirects) . '));',
-            'JS'
-        );
-        echo adminHelper('loadView', 'index');
+        $oAsset->load('jquery.textareaLinesNumbers.js', 'nailsapp/module-redirect');
+        $oAsset->load('jquery.textareaLinesNumbers.css', 'nailsapp/module-redirect');
+        $oAsset->inline('$("textarea").textareaLinesNumbers()', 'JS');
+
+        $this->data['page']->title = 'Redirects &rsaquo; Batch Edit';
+        Helper::loadView('batch');
+    }
+
+    // --------------------------------------------------------------------------
+
+    protected function afterCreateAndEdit($sMode, \stdClass $oNewItem, \stdClass $oOldItem = null)
+    {
+        parent::afterCreateAndEdit($sMode, $oNewItem, $oOldItem);
+        //  @todo (Pablo - 2018-02-23) - rewrite routes
     }
 }

@@ -17,29 +17,33 @@ use Nails\Common\Model\Base;
 class Redirect extends Base
 {
     /**
-     * Model constructor
-     **/
+     * Redirect constructor.
+     */
     public function __construct()
     {
         parent::__construct();
         $this->table             = NAILS_DB_PREFIX . 'redirect';
-        $this->tableAlias       = 't';
         $this->defaultSortColumn = null;
+        $this->tableLabelColumn  = null;
     }
 
     // --------------------------------------------------------------------------
 
-    //  @todo base mdoel should provide this functionality
-    public function insertBatch($aData)
+    /**
+     * Describes the fields for this model automatically and with some guesswork;
+     * for more fine grained control models should overload this method.
+     *
+     * @return array
+     */
+    public function describeFields()
     {
-        return $this->db->insert_batch($this->table, $aData);
-    }
+        $aFields = parent::describeFields();
 
-    // --------------------------------------------------------------------------
+        $aFields['old_url']->validation[] = 'required';
+        $aFields['old_url']->validation[] = 'is_unique[' . $this->getTableName() . '.old_url]';
+        $aFields['new_url']->validation[] = 'required';
+        $aFields['type']->validation[]    = 'required';
 
-    //  @todo base mdoel should provide this functionality (maybe, awfully destructive)
-    public function truncateAll()
-    {
-        return $this->db->truncate($this->table);
+        return $aFields;
     }
 }
