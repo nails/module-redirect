@@ -16,7 +16,6 @@ use Nails\Common\Interfaces\RouteGenerator;
 use Nails\Factory;
 use PDO;
 
-
 class Routes implements RouteGenerator
 {
     /**

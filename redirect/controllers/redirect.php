@@ -1,7 +1,7 @@
 <?php
 
-use Nails\Factory;
 use App\Controller\Base;
+use Nails\Factory;
 
 class Redirect extends Base
 {
