@@ -24,7 +24,7 @@ class Routes implements RouteGenerator
      */
     public static function generate()
     {
-        $oDb            = Factory::service('ConsoleDatabase', 'nailsapp/module-console');
+        $oDb            = Factory::service('PDODatabase');
         $oRedirectModel = Factory::model('Redirect', 'nailsapp/module-redirect');
         $aRoutes        = [];
 
