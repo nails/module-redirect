@@ -25,6 +25,7 @@ class Redirect extends Base
         $this->table             = NAILS_DB_PREFIX . 'redirect';
         $this->defaultSortColumn = null;
         $this->tableLabelColumn  = null;
+        $this->searchableFields  = ['old_url', 'neW_url'];
     }
 
     // --------------------------------------------------------------------------
