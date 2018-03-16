@@ -41,7 +41,6 @@ class Redirect extends Base
         $aFields = parent::describeFields();
 
         $aFields['old_url']->validation[] = 'required';
-        $aFields['old_url']->validation[] = 'is_unique[' . $this->getTableName() . '.old_url]';
         $aFields['new_url']->validation[] = 'required';
         $aFields['type']->validation[]    = 'required';
 
