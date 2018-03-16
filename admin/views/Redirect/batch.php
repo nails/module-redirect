@@ -1,34 +1,30 @@
+<?=form_open_multipart()?>
 <p>
-    Batch update the redirects table; old URLs on the left will redirect to the new URLs on the right. Make sure there
-    is only 1 URL per line and that there is an equal number of URLs in either box.
+    <strong>1. CSV File</strong>
+</p>
+<p>
+    This should be a *.csv file which contains 3 columns: old URL, new URL, type of redirect (301 or 302).
+</p>
+<p>
+    <input type="file" name="upload" style="border: 1px solid #CCC;padding: 1rem; width: 100%;margin-bottom: 1rem">
+</p>
+<p>
+    <strong>2. Action</strong>
+</p>
+<p>
+    Define how to process the redirects.
+</p>
+<p>
+    <select name="action" class="select2">
+        <option value="APPEND">Append - add new items in the CSV to the database</option>
+        <option value="REPLACE">Replace - replace the items in the database with those in the CSV</option>
+        <option value="REMOVE">Remove - remove items in the CSV from the database</option>
+    </select>
 </p>
 <hr>
-<?=form_open()?>
-<table>
-    <thead>
-        <tr>
-            <th>Old URLs</th>
-            <th>New URLs</th>
-            <th>Redirect Type</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td width="45%">
-                <textarea name="old"><?=set_value('old', $sOldUrls)?></textarea>
-            </td>
-            <td width="*">
-                <textarea name="new"><?=set_value('new', $sNewUrls)?></textarea>
-            </td>
-            <td width="125">
-                <textarea name="type"><?=set_value('type', $sTypes)?></textarea>
-            </td>
-        </tr>
-    </tbody>
-</table>
 <p>
     <button type="submit" class="btn btn-primary">
-        Save Changes
+        Upload
     </button>
 </p>
 <?=form_close()?>

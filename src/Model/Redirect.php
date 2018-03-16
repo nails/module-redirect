@@ -47,4 +47,29 @@ class Redirect extends Base
 
         return $aFields;
     }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Normalises a URL to just its path and query components
+     *
+     * @param stirng $sUrl The URL to normalise
+     *
+     * @throws \Exception
+     * @return string
+     */
+    public static function normaliseUrl($sUrl)
+    {
+        $aUrl = parse_url($sUrl);
+        if (!is_array($aUrl)) {
+            throw new \Exception('Failed to parse URL (' . $sUrl . ')');
+        }
+        return implode(
+            '?',
+            array_filter([
+                getFromArray('path', $aUrl),
+                getFromArray('query', $aUrl),
+            ])
+        );
+    }
 }

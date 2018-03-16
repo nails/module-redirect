@@ -14,6 +14,7 @@ namespace Nails\Admin\Redirect;
 
 use Nails\Admin\Controller\DefaultController;
 use Nails\Admin\Helper;
+use Nails\Common\Exception\ValidationException;
 use Nails\Factory;
 
 class Redirect extends DefaultController
@@ -34,58 +35,130 @@ class Redirect extends DefaultController
     ];
     const CONFIG_INDEX_HEADER_BUTTONS = [
         ['admin/redirect/redirect/batch', 'Batch Edit', 'default'],
+        ['admin/redirect/redirect/download', 'Download as CSV', 'default'],
     ];
 
     // --------------------------------------------------------------------------
 
+    /**
+     * Allows for batch editing of the Redirects database
+     */
     public function batch()
     {
         $oInput = Factory::service('Input');
-        $oModel = Factory::model('Redirect', 'nailsapp/module-redirect');
-
         if ($oInput->post()) {
             try {
 
-                $oFormValidation = Factory::service('FormValidation');
-                $oFormValidation->set_rules('old', '', 'required');
-                $oFormValidation->set_rules('new', '', 'required');
-                $oFormValidation->set_rules('type', '', 'required');
-                if (!$oFormValidation->run()) {
-                    throw new \Exception('All fields are required.');
+                $aFile = getFromArray('upload', $_FILES);
+                if (empty($aFile)) {
+                    throw new ValidationException('No CSV was uploaded.');
+                } elseif ($aFile['error'] !== UPLOAD_ERR_OK) {
+                    $oCdn = Factory::service('Cdn', 'nailsapp/module-cdn');
+                    throw new ValidationException('CSV failed to upload: ' . $oCdn::getUploadError($aFile['error']));
                 }
 
-                $aOldUrls      = explode("\n", trim($oInput->post('old')));
-                $iCountOldUrls = count($aOldUrls);
-                $aNewUrls      = explode("\n", trim($oInput->post('new')));
-                $iCountNewUrls = count($aNewUrls);
-                $aType         = explode("\n", trim($oInput->post('type')));
-                $iCountType    = count($aType);
-
-                if ($iCountOldUrls !== $iCountNewUrls && $iCountOldUrls !== $iCountType) {
-                    throw new \Exception('There must be an equal number of lines in each field.');
+                $sAction = $oInput->post('action');
+                if (!in_array($sAction, ['APPEND', 'REPLACE', 'REMOVE'])) {
+                    throw new ValidationException('Invalid Action');
                 }
 
-                $aAllowedTypes = [301, 302];
-                $aInvalidTypes = array_diff(array_unique($aType), $aAllowedTypes);
-                if (!empty($aInvalidTypes)) {
-                    throw new \Exception('The following redirect types are invalid: ' . implode(', ', $aInvalidTypes));
+                // --------------------------------------------------------------------------
+
+                $rFile = fopen($aFile['tmp_name'], 'r');
+                if (empty($rFile)) {
+                    throw new \Exception('Failed to open CSV for reading.');
                 }
 
-                $aRedirects = [];
-                for ($i = 0; $i < $iCountOldUrls; $i++) {
-                    $aRedirects[$aOldUrls[$i]] = [$aNewUrls[$i], $aType[$i]];
+                //  Validate the contents
+                $iCounter         = 0;
+                $sValidUrlPattern = '/^(https?:\/\/.+|\/.*)$/i';
+                while (($aData = fgetcsv($rFile)) !== false) {
+                    $iCounter++;
+                    if (!empty($aData)) {
+
+                        $sOldUrl = trim(getFromArray(0, $aData));
+                        $sNewUrl = trim(getFromArray(1, $aData));
+                        $sType   = trim(getFromArray(2, $aData));
+
+                        if ($sOldUrl == 'old_url' || $sNewUrl == 'new_url' || $sType == 'type') {
+                            continue;
+                        }
+
+                        if (empty($sOldUrl)) {
+                            throw new ValidationException('Old URL empty at item #' . $iCounter);
+                        } elseif (!preg_match($sValidUrlPattern, $sOldUrl)) {
+                            throw new ValidationException('Old URL invalid at item #' . $iCounter . ' (' . $sOldUrl . ')');
+                        } elseif (empty($sNewUrl)) {
+                            throw new ValidationException('New URL empty at item #' . $iCounter);
+                        } elseif (!preg_match($sValidUrlPattern, $sNewUrl)) {
+                            throw new ValidationException('New URL invalid at item #' . $iCounter . ' (' . $sNewUrl . ')');
+                        } elseif (!in_array($sType, ['301', '302'])) {
+                            throw new ValidationException('Invalid redirect type (' . $sType . ') at item #' . $iCounter);
+                        }
+                    }
                 }
 
-                $oModel->truncate();
-                foreach ($aRedirects as $sOldUrl => $aNewUrl) {
-                    $oModel->create(['old_url' => $sOldUrl, 'new_url' => $aNewUrl[0], 'type' => $aNewUrl[1]]);
+                rewind($rFile);
+
+                $oDb    = Factory::service('Database');
+                $oModel = Factory::model('Redirect', 'nailsapp/module-redirect');
+                $sTable = $oModel->getTableName();
+
+                if ($sAction === 'REPLACE') {
+                    $oDb->truncate($sTable);
                 }
 
-                $oRoutesModel = Factory::model('Routes');
-                $oRoutesModel->update();
+                $iCounter = 0;
+                while (($aData = fgetcsv($rFile)) !== false) {
+                    $iCounter++;
+                    if (!empty($aData)) {
+
+                        $sOldUrl = trim(getFromArray(0, $aData));
+                        $sNewUrl = trim(getFromArray(1, $aData));
+                        $sType   = trim(getFromArray(2, $aData));
+
+                        if ($sOldUrl == 'old_url' || $sNewUrl == 'new_url' || $sType == 'type') {
+                            continue;
+                        }
+
+                        $sOldUrl = $oModel::normaliseUrl($sOldUrl);
+                        $sNewUrl = $oModel::normaliseUrl($sNewUrl);
+
+                        $oDb->where('old_url', $sOldUrl);
+                        $bExists = (bool) $oDb->count_all_results($sTable);
+
+                        switch ($sAction) {
+                            case 'APPEND':
+                                $oDb->where('old_url', $sOldUrl);
+                                if (!(bool) $oDb->count_all_results($sTable)) {
+                                    $oModel->create([
+                                        'old_url' => $sOldUrl,
+                                        'new_url' => $sNewUrl,
+                                        'type'    => $sType,
+                                    ]);
+                                }
+                                break;
+                            case 'REPLACE':
+                                $oModel->create([
+                                    'old_url' => $sOldUrl,
+                                    'new_url' => $sNewUrl,
+                                    'type'    => $sType,
+                                ]);
+                                break;
+                            case 'REMOVE':
+                                $oDb->where('old_url', $sOldUrl);
+                                $oDb->delete($sTable);
+                                break;
+                        }
+
+                        $oDb->flushCache();
+                    }
+                }
+
+                // --------------------------------------------------------------------------
 
                 $oSession = Factory::service('Session', 'nailsapp/module-auth');
-                $oSession->setFlashData('success', 'Redirects updated successfully.');
+                $oSession->setFlashData('success', 'Redirects processed successfully.');
                 redirect('admin/redirect/redirect/batch');
 
             } catch (\Exception $e) {
@@ -93,34 +166,21 @@ class Redirect extends DefaultController
             }
         }
 
-        $aRedirects = $oModel->getAll();
-        $aOldUrls   = [];
-        $aNewUrls   = [];
-        $aTypes     = [];
-        foreach ($aRedirects as $oRedirect) {
-            $aOldUrls[] = $oRedirect->old_url;
-            $aNewUrls[] = $oRedirect->new_url;
-            $aTypes[]   = $oRedirect->type;
-        }
-
-        $this->data['sOldUrls'] = implode("\n", $aOldUrls);
-        $this->data['sNewUrls'] = implode("\n", $aNewUrls);
-        $this->data['sTypes']   = implode("\n", $aTypes);
-
-        $oAsset = Factory::service('Asset');
-        $oAsset->load('jquery.textareaLinesNumbers.js', 'nailsapp/module-redirect');
-        $oAsset->load('jquery.textareaLinesNumbers.css', 'nailsapp/module-redirect');
-        $oAsset->inline('$("textarea").textareaLinesNumbers()', 'JS');
-
         $this->data['page']->title = 'Redirects &rsaquo; Batch Edit';
         Helper::loadView('batch');
     }
 
     // --------------------------------------------------------------------------
 
-    protected function afterCreateAndEdit($sMode, \stdClass $oNewItem, \stdClass $oOldItem = null)
+    /**
+     * Download all redirects as a CSV
+     */
+    public function download()
     {
-        parent::afterCreateAndEdit($sMode, $oNewItem, $oOldItem);
-        //  @todo (Pablo - 2018-02-23) - rewrite routes
+        $oModel = Factory::model('Redirect', 'nailsapp/module-redirect');
+        $oQuery = $oModel->getAllRawQuery([
+            'select' => ['old_url', 'new_url', 'type'],
+        ]);
+        Helper::loadCsv($oQuery, 'redirects.csv', true);
     }
 }
