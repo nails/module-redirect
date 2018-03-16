@@ -31,7 +31,7 @@ class Events extends Base
 
         $aResults = $oModel->getAll([
             'where' => [
-                ['old_url', $sUri],
+                ['old_url', '/' . trim($sUri, '/')],
             ],
         ]);
 
