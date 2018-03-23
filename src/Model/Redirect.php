@@ -116,13 +116,29 @@ class Redirect extends Base
         if (!is_array($aUrl)) {
             throw new \Exception('Failed to parse URL (' . $sUrl . ')');
         }
-        $sUrl = implode(
-            '?',
-            array_filter([
-                getFromArray('path', $aUrl),
-                getFromArray('query', $aUrl),
-            ])
-        );
+
+        $sScheme = getFromArray('scheme', $aUrl, 'http');
+        $sHost   = getFromArray('host', $aUrl, BASE_URL);
+        $sPath   = getFromArray('path', $aUrl, '/');
+        $sQuery  = getFromArray('query', $aUrl);
+
+        $aBaseUrl    = parse_url(BASE_URL);
+        $sBaseScheme = getFromArray('scheme', $aBaseUrl, 'http');
+        $sBaseHost   = getFromArray('host', $aBaseUrl, BASE_URL);
+
+        if ($sBaseScheme === $sScheme && $sBaseHost === $sHost) {
+            $sDomain = '';
+        } else {
+            $sDomain = $sScheme . '://' . $sHost;
+        }
+
+        $sUrl = $sDomain . implode(
+                '?',
+                array_filter([
+                    getFromArray('path', $aUrl),
+                    getFromArray('query', $aUrl),
+                ])
+            );
 
         return rtrim($sUrl, '/');
     }
