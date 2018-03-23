@@ -26,14 +26,19 @@ class Events extends Base
     public function redirects()
     {
         $oInput = Factory::service('Input');
-        $sUri   = $oInput->server('REQUEST_URI');
         $oModel = Factory::model('Redirect', 'nailsapp/module-redirect');
 
-        $aResults = $oModel->getAll([
-            'where' => [
-                ['old_url', '/' . trim($sUri, '/')],
-            ],
-        ]);
+        $sUri = $oInput->server('REQUEST_URI');
+        $sUri = '/' . trim($sUri, '/');
+
+        /**
+         * Using PDO to craft our own query as CI manipulates the string if there's
+         * a query string when attempting to protect identifiers.
+         */
+        $oPdoDb        = Factory::service('PDODatabase');
+        $oPdoStatement = $oPdoDb->prepare('SELECT * FROM `' . $oModel->getTableName() . '` WHERE old_url = :old_url');
+        $oPdoStatement->execute(['old_url' => $sUri]);
+        $aResults = $oPdoStatement->fetchAll(\PDO::FETCH_OBJ);
 
         if (!empty($aResults)) {
             $oRedirect = reset($aResults);
