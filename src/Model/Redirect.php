@@ -93,10 +93,10 @@ class Redirect extends Base
     protected function normaliseUrls(array &$aData)
     {
         if (array_key_exists('old_url', $aData)) {
-            $aData['old_url'] = static::normaliseUrl($aData['old_url']);
+            $aData['old_url'] = static::normaliseUrl(trim($aData['old_url']));
         }
         if (array_key_exists('new_url', $aData)) {
-            $aData['new_url'] = static::normaliseUrl($aData['new_url']);
+            $aData['new_url'] = static::normaliseUrl(trim($aData['new_url']));
         }
     }
 
