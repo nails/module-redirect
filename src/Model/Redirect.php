@@ -118,7 +118,7 @@ class Redirect extends Base
         }
 
         $sScheme = getFromArray('scheme', $aUrl, 'http');
-        $sHost   = getFromArray('host', $aUrl, BASE_URL);
+        $sHost   = getFromArray('host', $aUrl);
         $sPath   = getFromArray('path', $aUrl, '/');
         $sQuery  = getFromArray('query', $aUrl);
 
@@ -128,8 +128,10 @@ class Redirect extends Base
 
         if ($sBaseScheme === $sScheme && $sBaseHost === $sHost) {
             $sDomain = '';
-        } else {
+        } elseif ($sHost) {
             $sDomain = $sScheme . '://' . $sHost;
+        } else {
+            $sDomain = '';
         }
 
         $sUrl = $sDomain . implode(
