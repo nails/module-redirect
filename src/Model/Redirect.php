@@ -34,11 +34,13 @@ class Redirect extends Base
      * Describes the fields for this model automatically and with some guesswork;
      * for more fine grained control models should overload this method.
      *
+     * @param  string $sTable The database table to query
+     *
      * @return array
      */
-    public function describeFields()
+    public function describeFields($sTable = null)
     {
-        $aFields = parent::describeFields();
+        $aFields = parent::describeFields($sTable);
 
         $aFields['old_url']->validation[] = 'required';
         $aFields['new_url']->validation[] = 'required';
