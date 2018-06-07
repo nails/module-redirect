@@ -22,9 +22,9 @@
     </select>
 </p>
 <hr>
-<p>
+<div class="admin-floating-controls">
     <button type="submit" class="btn btn-primary">
-        Upload
+        Save Changes
     </button>
-</p>
+</div>
 <?=form_close()?>
