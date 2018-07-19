@@ -60,7 +60,7 @@ class Redirect extends Base
      * @return mixed
      * @throws ModelException
      */
-    public function create($aData = [], $bReturnObject = false)
+    public function create(array $aData = [], $bReturnObject = false)
     {
         $this->normaliseUrls($aData);
         return parent::create($aData, $bReturnObject);
@@ -77,7 +77,7 @@ class Redirect extends Base
      * @return boolean
      * @throws ModelException
      */
-    public function update($mIds, $aData = [])
+    public function update($mIds, array $aData = [])
     {
         $this->normaliseUrls($aData);
         return parent::update($mIds, $aData);
