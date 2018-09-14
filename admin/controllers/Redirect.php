@@ -20,7 +20,7 @@ use Nails\Factory;
 class Redirect extends DefaultController
 {
     const CONFIG_MODEL_NAME           = 'Redirect';
-    const CONFIG_MODEL_PROVIDER       = 'nailsapp/module-redirect';
+    const CONFIG_MODEL_PROVIDER       = 'nails/module-redirect';
     const CONFIG_SORT_OPTIONS         = [
         'created'  => 'Created',
         'modified' => 'Modified',
@@ -53,7 +53,7 @@ class Redirect extends DefaultController
                 if (empty($aFile)) {
                     throw new ValidationException('No CSV was uploaded.');
                 } elseif ($aFile['error'] !== UPLOAD_ERR_OK) {
-                    $oCdn = Factory::service('Cdn', 'nailsapp/module-cdn');
+                    $oCdn = Factory::service('Cdn', 'nails/module-cdn');
                     throw new ValidationException('CSV failed to upload: ' . $oCdn::getUploadError($aFile['error']));
                 }
 
@@ -101,7 +101,7 @@ class Redirect extends DefaultController
                 rewind($rFile);
 
                 $oDb    = Factory::service('Database');
-                $oModel = Factory::model('Redirect', 'nailsapp/module-redirect');
+                $oModel = Factory::model('Redirect', 'nails/module-redirect');
                 $sTable = $oModel->getTableName();
 
                 if ($sAction === 'REPLACE') {
@@ -157,7 +157,7 @@ class Redirect extends DefaultController
 
                 // --------------------------------------------------------------------------
 
-                $oSession = Factory::service('Session', 'nailsapp/module-auth');
+                $oSession = Factory::service('Session', 'nails/module-auth');
                 $oSession->setFlashData('success', 'Redirects processed successfully.');
                 redirect('admin/redirect/redirect/batch');
 
@@ -177,7 +177,7 @@ class Redirect extends DefaultController
      */
     public function download()
     {
-        $oModel = Factory::model('Redirect', 'nailsapp/module-redirect');
+        $oModel = Factory::model('Redirect', 'nails/module-redirect');
         $oQuery = $oModel->getAllRawQuery([
             'select' => ['old_url', 'new_url', 'type'],
         ]);

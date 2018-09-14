@@ -1,5 +1,5 @@
 {
-    "name": "nailsapp/module-redirect",
+    "name": "nails/module-redirect",
     "keywords": ["Nails", "Shed Collective", "CodeIgniter", "Redirect Module"],
     "homepage": "http://nailsapp.co.uk/modules/redirect",
     "description": "This is the \"Redirect\" module for Nails.",
@@ -27,7 +27,7 @@
     "prefer-stable": true,
     "require":
     {
-        "nailsapp/common": "dev-develop"
+        "nails/common": "dev-develop"
     },
     "require-dev":
     {

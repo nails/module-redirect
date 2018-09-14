@@ -13,7 +13,7 @@ class Events extends Base
         return [
             Factory::factory('EventSubscription')
                    ->setEvent(Common\Events::SYSTEM_READY)
-                   ->setNamespace('nailsapp/common')
+                   ->setNamespace('nails/common')
                    ->setCallback([$this, 'redirects']),
         ];
     }
@@ -26,7 +26,7 @@ class Events extends Base
     public function redirects()
     {
         $oInput = Factory::service('Input');
-        $oModel = Factory::model('Redirect', 'nailsapp/module-redirect');
+        $oModel = Factory::model('Redirect', 'nails/module-redirect');
 
         $sUri = $oInput->server('REQUEST_URI');
         $sUri = '/' . trim($sUri, '/');
