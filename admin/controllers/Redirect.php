@@ -22,16 +22,16 @@ class Redirect extends DefaultController
     const CONFIG_MODEL_NAME           = 'Redirect';
     const CONFIG_MODEL_PROVIDER       = 'nails/module-redirect';
     const CONFIG_SORT_OPTIONS         = [
-        'created'  => 'Created',
-        'modified' => 'Modified',
-        'old_url'  => 'Old URL',
-        'new_url'  => 'New URL',
+        'Created'  => 'created',
+        'Modified' => 'modified',
+        'Old URL'  => 'old_url',
+        'New URL'  => 'new_url',
     ];
     const CONFIG_INDEX_FIELDS         = [
-        'old_url'  => 'Old URL',
-        'new_url'  => 'New URL',
-        'created'  => 'Created',
-        'modified' => 'Modified',
+        'Old URL'  => 'old_url',
+        'New URL'  => 'new_url',
+        'Created'  => 'created',
+        'Modified' => 'modified',
     ];
     const CONFIG_INDEX_HEADER_BUTTONS = [
         ['admin/redirect/redirect/batch', 'Batch Edit', 'default'],
@@ -43,7 +43,7 @@ class Redirect extends DefaultController
     /**
      * Allows for batch editing of the Redirects database
      */
-    public function batch()
+    public function batch(): void
     {
         $oInput = Factory::service('Input');
         if ($oInput->post()) {
@@ -175,7 +175,7 @@ class Redirect extends DefaultController
     /**
      * Download all redirects as a CSV
      */
-    public function download()
+    public function download(): void
     {
         $oModel = Factory::model('Redirect', 'nails/module-redirect');
         $oQuery = $oModel->getAllRawQuery([
