@@ -12,6 +12,7 @@
 
 namespace Nails\Redirect\Model;
 
+use Nails\Common\Exception\NailsException;
 use Nails\Common\Model\Base;
 
 class Redirect extends Base
@@ -116,7 +117,7 @@ class Redirect extends Base
     {
         $aUrl = parse_url($sUrl);
         if (!is_array($aUrl)) {
-            throw new \Exception('Failed to parse URL (' . $sUrl . ')');
+            throw new NailsException('Failed to parse URL (' . $sUrl . ')');
         }
 
         $sScheme = getFromArray('scheme', $aUrl, 'http');

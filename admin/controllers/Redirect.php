@@ -14,6 +14,7 @@ namespace Nails\Admin\Redirect;
 
 use Nails\Admin\Controller\DefaultController;
 use Nails\Admin\Helper;
+use Nails\Common\Exception\NailsException;
 use Nails\Common\Exception\ValidationException;
 use Nails\Factory;
 
@@ -66,7 +67,7 @@ class Redirect extends DefaultController
 
                 $rFile = fopen($aFile['tmp_name'], 'r');
                 if (empty($rFile)) {
-                    throw new \Exception('Failed to open CSV for reading.');
+                    throw new NailsException('Failed to open CSV for reading.');
                 }
 
                 //  Validate the contents
