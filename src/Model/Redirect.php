@@ -78,7 +78,7 @@ class Redirect extends Base
      * @return boolean
      * @throws ModelException
      */
-    public function update($mIds, array $aData = [])
+    public function update($mIds, array $aData = []): bool
     {
         $this->normaliseUrls($aData);
         return parent::update($mIds, $aData);
