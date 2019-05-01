@@ -108,7 +108,7 @@ class Redirect extends Base
     /**
      * Normalises a URL to just its path and query components
      *
-     * @param stirng $sUrl The URL to normalise
+     * @param string $sUrl The URL to normalise
      *
      * @throws \Exception
      * @return string
