@@ -7,7 +7,7 @@
  * @category events
  */
 
-namespace Nails\Redirect\Listener\System;
+namespace Nails\Redirect\Event\Listener\System;
 
 use Nails\Common;
 use Nails\Common\Events\Subscription;
