@@ -14,6 +14,7 @@ namespace Nails\Admin\Redirect;
 
 use Nails\Admin\Controller\DefaultController;
 use Nails\Admin\Helper;
+use Nails\Auth;
 use Nails\Common\Exception\NailsException;
 use Nails\Common\Exception\ValidationException;
 use Nails\Factory;
@@ -158,7 +159,7 @@ class Redirect extends DefaultController
 
                 // --------------------------------------------------------------------------
 
-                $oSession = Factory::service('Session', 'nails/module-auth');
+                $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
                 $oSession->setFlashData('success', 'Redirects processed successfully.');
                 redirect('admin/redirect/redirect/batch');
 
