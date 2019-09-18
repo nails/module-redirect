@@ -17,6 +17,7 @@ use Nails\Admin\Helper;
 use Nails\Auth;
 use Nails\Common\Exception\NailsException;
 use Nails\Common\Exception\ValidationException;
+use Nails\Cdn;
 use Nails\Factory;
 
 class Redirect extends DefaultController
@@ -55,7 +56,7 @@ class Redirect extends DefaultController
                 if (empty($aFile)) {
                     throw new ValidationException('No CSV was uploaded.');
                 } elseif ($aFile['error'] !== UPLOAD_ERR_OK) {
-                    $oCdn = Factory::service('Cdn', 'nails/module-cdn');
+                    $oCdn = Factory::service('Cdn', Cdn\Constants::MODULE_SLUG);
                     throw new ValidationException('CSV failed to upload: ' . $oCdn::getUploadError($aFile['error']));
                 }
 
