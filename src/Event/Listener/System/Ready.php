@@ -12,7 +12,7 @@ namespace Nails\Redirect\Event\Listener\System;
 use Nails\Common;
 use Nails\Common\Events\Subscription;
 use Nails\Factory;
-
+use Nails\Redirect\Constants;
 
 /**
  * Class Ready
@@ -42,7 +42,7 @@ class Ready extends Subscription
     public function execute(): void
     {
         $oInput = Factory::service('Input');
-        $oModel = Factory::model('Redirect', 'nails/module-redirect');
+        $oModel = Factory::model('Redirect', Constants::MODULE_SLUG);
 
         $sUri = $oInput->server('REQUEST_URI');
         $sUri = '/' . trim($sUri, '/');

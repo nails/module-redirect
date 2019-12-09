@@ -15,15 +15,25 @@ namespace Nails\Admin\Redirect;
 use Nails\Admin\Controller\DefaultController;
 use Nails\Admin\Helper;
 use Nails\Auth;
+use Nails\Common\Exception\FactoryException;
 use Nails\Common\Exception\NailsException;
 use Nails\Common\Exception\ValidationException;
 use Nails\Cdn;
+use Nails\Common\Service\Database;
+use Nails\Common\Service\Input;
 use Nails\Factory;
+use Nails\Redirect\Constants;
 
+/**
+ * Class Redirect
+ *
+ * @package Nails\Admin\Redirect
+ */
 class Redirect extends DefaultController
 {
     const CONFIG_MODEL_NAME           = 'Redirect';
-    const CONFIG_MODEL_PROVIDER       = 'nails/module-redirect';
+    const CONFIG_MODEL_PROVIDER       = Constants::MODULE_SLUG;
+    const CONFIG_PERMISSION           = 'redirect:redirect';
     const CONFIG_SORT_OPTIONS         = [
         'Created'  => 'created',
         'Modified' => 'modified',
@@ -44,10 +54,34 @@ class Redirect extends DefaultController
     // --------------------------------------------------------------------------
 
     /**
+     * Returns an array of extra permissions for this controller
+     *
+     * @return array
+     */
+    public static function permissions(): array
+    {
+        return array_merge(
+            parent::permissions(),
+            [
+                'downlaod' => 'Download all redirects as a CSV',
+            ]
+        );
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
      * Allows for batch editing of the Redirects database
+     *
+     * @throws FactoryException
      */
     public function batch(): void
     {
+        if (!self::userCan('edit')) {
+            unauthorised();
+        }
+
+        /** @var Input $oInput */
         $oInput = Factory::service('Input');
         if ($oInput->post()) {
             try {
@@ -103,8 +137,11 @@ class Redirect extends DefaultController
 
                 rewind($rFile);
 
-                $oDb    = Factory::service('Database');
-                $oModel = Factory::model('Redirect', 'nails/module-redirect');
+                /** @var Database $oDb */
+                $oDb = Factory::service('Database');
+                /** @var \Nails\Redirect\Model\Redirect $oModel */
+                $oModel = Factory::model('Redirect', Constants::MODULE_SLUG);
+
                 $sTable = $oModel->getTableName();
 
                 if ($sAction === 'REPLACE') {
@@ -160,6 +197,7 @@ class Redirect extends DefaultController
 
                 // --------------------------------------------------------------------------
 
+                /** @var Auth\Service\Session $oSession */
                 $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
                 $oSession->setFlashData('success', 'Redirects processed successfully.');
                 redirect('admin/redirect/redirect/batch');
@@ -180,7 +218,8 @@ class Redirect extends DefaultController
      */
     public function download(): void
     {
-        $oModel = Factory::model('Redirect', 'nails/module-redirect');
+        /** @var \Nails\Redirect\Model\Redirect $oModel */
+        $oModel = Factory::model('Redirect', Constants::MODULE_SLUG);
         $oQuery = $oModel->getAllRawQuery([
             'select' => ['old_url', 'new_url', 'type'],
         ]);

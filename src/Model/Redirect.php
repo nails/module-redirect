@@ -15,15 +15,28 @@ namespace Nails\Redirect\Model;
 use Nails\Common\Exception\NailsException;
 use Nails\Common\Model\Base;
 
+/**
+ * Class Redirect
+ *
+ * @package Nails\Redirect\Model
+ */
 class Redirect extends Base
 {
+    /**
+     * The table this model represents
+     *
+     * @var string
+     */
+    const TABLE = NAILS_DB_PREFIX . 'redirect';
+
+    // --------------------------------------------------------------------------
+
     /**
      * Redirect constructor.
      */
     public function __construct()
     {
         parent::__construct();
-        $this->table             = NAILS_DB_PREFIX . 'redirect';
         $this->defaultSortColumn = null;
         $this->tableLabelColumn  = null;
         $this->searchableFields  = ['old_url', 'neW_url'];
@@ -35,7 +48,7 @@ class Redirect extends Base
      * Describes the fields for this model automatically and with some guesswork;
      * for more fine grained control models should overload this method.
      *
-     * @param  string $sTable The database table to query
+     * @param string $sTable The database table to query
      *
      * @return array
      */
@@ -55,8 +68,8 @@ class Redirect extends Base
     /**
      * Creates a new object; overriding to normalise URLs
      *
-     * @param  array   $aData         The data to create the object with
-     * @param  boolean $bReturnObject Whether to return just the new ID or the full object
+     * @param array   $aData         The data to create the object with
+     * @param boolean $bReturnObject Whether to return just the new ID or the full object
      *
      * @return mixed
      * @throws ModelException
@@ -72,8 +85,8 @@ class Redirect extends Base
     /**
      * Updates an existing object; overriding to normalise URLs
      *
-     * @param  integer|array $mIds  The ID (or array of IDs) of the object(s) to update
-     * @param  array         $aData The data to update the object(s) with
+     * @param integer|array $mIds  The ID (or array of IDs) of the object(s) to update
+     * @param array         $aData The data to update the object(s) with
      *
      * @return boolean
      * @throws ModelException
@@ -110,8 +123,8 @@ class Redirect extends Base
      *
      * @param string $sUrl The URL to normalise
      *
-     * @throws \Exception
      * @return string
+     * @throws \Exception
      */
     public static function normaliseUrl($sUrl)
     {
