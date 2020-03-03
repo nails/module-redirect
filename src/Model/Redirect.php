@@ -14,6 +14,7 @@ namespace Nails\Redirect\Model;
 
 use Nails\Common\Exception\NailsException;
 use Nails\Common\Model\Base;
+use Nails\Config;
 
 /**
  * Class Redirect
@@ -138,9 +139,9 @@ class Redirect extends Base
         $sPath   = getFromArray('path', $aUrl, '/');
         $sQuery  = getFromArray('query', $aUrl);
 
-        $aBaseUrl    = parse_url(BASE_URL);
+        $aBaseUrl    = parse_url(Config::get('BASE_URL');
         $sBaseScheme = getFromArray('scheme', $aBaseUrl, 'http');
-        $sBaseHost   = getFromArray('host', $aBaseUrl, BASE_URL);
+        $sBaseHost   = getFromArray('host', $aBaseUrl, Config::get('BASE_URL');
 
         if ($sBaseScheme === $sScheme && $sBaseHost === $sHost) {
             $sDomain = '';
