@@ -139,9 +139,9 @@ class Redirect extends Base
         $sPath   = getFromArray('path', $aUrl, '/');
         $sQuery  = getFromArray('query', $aUrl);
 
-        $aBaseUrl    = parse_url(Config::get('BASE_URL');
+        $aBaseUrl    = parse_url(Config::get('BASE_URL'));
         $sBaseScheme = getFromArray('scheme', $aBaseUrl, 'http');
-        $sBaseHost   = getFromArray('host', $aBaseUrl, Config::get('BASE_URL');
+        $sBaseHost   = getFromArray('host', $aBaseUrl, Config::get('BASE_URL'));
 
         if ($sBaseScheme === $sScheme && $sBaseHost === $sHost) {
             $sDomain = '';
