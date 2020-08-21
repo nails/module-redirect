@@ -14,6 +14,7 @@ namespace Nails\Redirect\Model;
 
 use Nails\Common\Exception\NailsException;
 use Nails\Common\Model\Base;
+use Nails\Common\Service\HttpCodes;
 use Nails\Config;
 
 /**
@@ -60,6 +61,14 @@ class Redirect extends Base
         $aFields['old_url']->validation[] = 'required';
         $aFields['new_url']->validation[] = 'required';
         $aFields['type']->validation[]    = 'required';
+
+        foreach ($aFields['type']->options as $k => &$v) {
+            $v = sprintf(
+                '%s - %s',
+                $v,
+                HttpCodes::getByCode($v)
+            );
+        }
 
         return $aFields;
     }
