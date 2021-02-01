@@ -34,13 +34,21 @@ class Redirect extends Base
     // --------------------------------------------------------------------------
 
     /**
+     * The name of the "label" column
+     *
+     * @var string
+     */
+    protected $tableLabelColumn = null;
+
+    // --------------------------------------------------------------------------
+
+    /**
      * Redirect constructor.
      */
     public function __construct()
     {
         parent::__construct();
         $this->defaultSortColumn = null;
-        $this->tableLabelColumn  = null;
         $this->searchableFields  = ['old_url', 'neW_url'];
     }
 
