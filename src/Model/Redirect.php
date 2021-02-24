@@ -48,7 +48,6 @@ class Redirect extends Base
     public function __construct()
     {
         parent::__construct();
-        $this->defaultSortColumn = null;
         $this->searchableFields  = ['old_url', 'neW_url'];
     }
 
