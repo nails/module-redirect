@@ -6,7 +6,7 @@
  * Finalised:   23/02/2018
  */
 
-namespace Nails\Database\Migration\Nails\ModuleRedirect;
+namespace Nails\Redirect\Database\Migration;
 
 use Nails\Common\Console\Migrate\Base;
 
