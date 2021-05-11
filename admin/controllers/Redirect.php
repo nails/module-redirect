@@ -17,6 +17,7 @@ use Nails\Admin\Helper;
 use Nails\Common\Exception\FactoryException;
 use Nails\Common\Exception\NailsException;
 use Nails\Common\Exception\ValidationException;
+use Nails\Common\Helper\ArrayHelper;
 use Nails\Cdn;
 use Nails\Common\Service\Database;
 use Nails\Common\Service\Input;
@@ -86,7 +87,7 @@ class Redirect extends DefaultController
         if ($oInput->post()) {
             try {
 
-                $aFile = getFromArray('upload', $_FILES);
+                $aFile = ArrayHelper::get('upload', $_FILES);
                 if (empty($aFile)) {
                     throw new ValidationException('No CSV was uploaded.');
                 } elseif ($aFile['error'] !== UPLOAD_ERR_OK) {
@@ -113,9 +114,9 @@ class Redirect extends DefaultController
                     $iCounter++;
                     if (!empty($aData)) {
 
-                        $sOldUrl = trim(getFromArray(0, $aData));
-                        $sNewUrl = trim(getFromArray(1, $aData));
-                        $sType   = trim(getFromArray(2, $aData));
+                        $sOldUrl = trim(ArrayHelper::get(0, $aData));
+                        $sNewUrl = trim(ArrayHelper::get(1, $aData));
+                        $sType   = trim(ArrayHelper::get(2, $aData));
 
                         if ($sOldUrl == 'old_url' || $sNewUrl == 'new_url' || $sType == 'type') {
                             continue;
@@ -153,9 +154,9 @@ class Redirect extends DefaultController
                     $iCounter++;
                     if (!empty($aData)) {
 
-                        $sOldUrl = trim(getFromArray(0, $aData));
-                        $sNewUrl = trim(getFromArray(1, $aData));
-                        $sType   = trim(getFromArray(2, $aData));
+                        $sOldUrl = trim(ArrayHelper::get(0, $aData));
+                        $sNewUrl = trim(ArrayHelper::get(1, $aData));
+                        $sType   = trim(ArrayHelper::get(2, $aData));
 
                         if ($sOldUrl == 'old_url' || $sNewUrl == 'new_url' || $sType == 'type') {
                             continue;

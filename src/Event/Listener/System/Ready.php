@@ -11,6 +11,8 @@ namespace Nails\Redirect\Event\Listener\System;
 
 use Nails\Common;
 use Nails\Common\Events\Subscription;
+use Nails\Common\Exception\FactoryException;
+use Nails\Common\Exception\ModelException;
 use Nails\Factory;
 use Nails\Redirect\Constants;
 

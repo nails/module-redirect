@@ -13,6 +13,8 @@
 namespace Nails\Redirect\Model;
 
 use Nails\Common\Exception\NailsException;
+use Nails\Common\Exception\ModelException;
+use Nails\Common\Helper\ArrayHelper;
 use Nails\Common\Model\Base;
 use Nails\Common\Service\HttpCodes;
 use Nails\Config;
@@ -150,14 +152,14 @@ class Redirect extends Base
             throw new NailsException('Failed to parse URL (' . $sUrl . ')');
         }
 
-        $sScheme = getFromArray('scheme', $aUrl, 'http');
-        $sHost   = getFromArray('host', $aUrl);
-        $sPath   = getFromArray('path', $aUrl, '/');
-        $sQuery  = getFromArray('query', $aUrl);
+        $sScheme = ArrayHelper::get('scheme', $aUrl, 'http');
+        $sHost   = ArrayHelper::get('host', $aUrl);
+        $sPath   = ArrayHelper::get('path', $aUrl, '/');
+        $sQuery  = ArrayHelper::get('query', $aUrl);
 
         $aBaseUrl    = parse_url(Config::get('BASE_URL'));
-        $sBaseScheme = getFromArray('scheme', $aBaseUrl, 'http');
-        $sBaseHost   = getFromArray('host', $aBaseUrl, Config::get('BASE_URL'));
+        $sBaseScheme = ArrayHelper::get('scheme', $aBaseUrl, 'http');
+        $sBaseHost   = ArrayHelper::get('host', $aBaseUrl, Config::get('BASE_URL'));
 
         if ($sBaseScheme === $sScheme && $sBaseHost === $sHost) {
             $sDomain = '';
@@ -170,8 +172,8 @@ class Redirect extends Base
         $sUrl = $sDomain . implode(
                 '?',
                 array_filter([
-                    getFromArray('path', $aUrl),
-                    getFromArray('query', $aUrl),
+                    ArrayHelper::get('path', $aUrl),
+                    ArrayHelper::get('query', $aUrl),
                 ])
             );
 
