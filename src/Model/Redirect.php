@@ -45,12 +45,16 @@ class Redirect extends Base
     // --------------------------------------------------------------------------
 
     /**
-     * Redirect constructor.
+     * Returns the searchable columns for this module
+     *
+     * @return string[]
      */
-    public function __construct()
+    public function getSearchableColumns(): array
     {
-        parent::__construct();
-        $this->searchableFields  = ['old_url', 'neW_url'];
+        return [
+            'old_url',
+            'new_url',
+        ];
     }
 
     // --------------------------------------------------------------------------
