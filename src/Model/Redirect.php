@@ -18,6 +18,7 @@ use Nails\Common\Helper\ArrayHelper;
 use Nails\Common\Model\Base;
 use Nails\Common\Service\HttpCodes;
 use Nails\Config;
+use Nails\Redirect\Constants;
 
 /**
  * Class Redirect
@@ -32,6 +33,20 @@ class Redirect extends Base
      * @var string
      */
     const TABLE = NAILS_DB_PREFIX . 'redirect';
+
+    /**
+     * The name of the resource to use (as passed to \Nails\Factory::resource())
+     *
+     * @var string
+     */
+    const RESOURCE_NAME = 'Redirect';
+
+    /**
+     * The provider of the resource to use (as passed to \Nails\Factory::resource())
+     *
+     * @var string
+     */
+    const RESOURCE_PROVIDER = Constants::MODULE_SLUG;
 
     // --------------------------------------------------------------------------
 

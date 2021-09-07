@@ -43,27 +43,12 @@ class Ready extends Subscription
      */
     public function execute(): void
     {
-        $oInput = Factory::service('Input');
-        $oModel = Factory::model('Redirect', Constants::MODULE_SLUG);
+        /** @var \Nails\Redirect\Service\Redirect $oService */
+        $oService  = Factory::service('Redirect', Constants::MODULE_SLUG);
+        $oRedirect = $oService->detectRedirect();
 
-        $sUri = $oInput->server('REQUEST_URI');
-        $sUri = '/' . trim($sUri, '/');
-
-        /**
-         * Using PDO to craft our own query as CI manipulates the string if there's
-         * a query string when attempting to protect identifiers.
-         */
-        $oPdoDb        = Factory::service('PDODatabase');
-        $oPdoStatement = $oPdoDb->prepare('SELECT * FROM `' . $oModel->getTableName() . '` WHERE old_url = :old_url');
-        $oPdoStatement->execute(['old_url' => $sUri]);
-        $aResults = $oPdoStatement->fetchAll(\PDO::FETCH_OBJ);
-
-        if (!empty($aResults)) {
-            $oRedirect = reset($aResults);
-            //  Avoid loops
-            if ($sUri !== $oRedirect->new_url) {
-                redirect($oRedirect->new_url, 'location', $oRedirect->type);
-            }
+        if (!empty($oRedirect)) {
+            redirect($oRedirect->new_url, 'location', $oRedirect->type);
         }
     }
 }
