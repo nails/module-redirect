@@ -21,7 +21,6 @@ use Nails\Common\Helper\ArrayHelper;
 use Nails\Cdn;
 use Nails\Common\Service\Database;
 use Nails\Common\Service\Input;
-use Nails\Common\Service\UserFeedback;
 use Nails\Factory;
 use Nails\Redirect\Constants;
 
@@ -198,13 +197,11 @@ class Redirect extends DefaultController
 
                 // --------------------------------------------------------------------------
 
-                /** @var UserFeedback $oUserFeedback */
-                $oUserFeedback = Factory::service('UserFeedback');
-                $oUserFeedback->success('Redirects processed successfully.');
+                $this->oUserFeedback->success('Redirects processed successfully.');
                 redirect('admin/redirect/redirect/batch');
 
             } catch (\Exception $e) {
-                $this->data['error'] = $e->getMessage();
+                $this->oUserFeedback->error($e->getMessage());
             }
         }
 
