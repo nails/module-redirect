@@ -2,6 +2,7 @@
 
 namespace Nails\Redirect\Helper;
 
+use Nails\Common\Exception\NailsException;
 use Nails\Common\Helper\ArrayHelper;
 use Nails\Config;
 

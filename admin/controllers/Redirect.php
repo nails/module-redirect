@@ -161,8 +161,8 @@ class Redirect extends DefaultController
                             continue;
                         }
 
-                        $sOldUrl = $oModel::normaliseUrl($sOldUrl);
-                        $sNewUrl = $oModel::normaliseUrl($sNewUrl);
+                        $sOldUrl = \Nails\Redirect\Helper\Redirect::normaliseUrl($sOldUrl);
+                        $sNewUrl = \Nails\Redirect\Helper\Redirect::normaliseUrl($sNewUrl);
 
                         $oDb->where('old_url', $sOldUrl);
                         $bExists = (bool) $oDb->count_all_results($sTable);
