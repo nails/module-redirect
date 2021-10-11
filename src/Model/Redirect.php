@@ -15,7 +15,9 @@ namespace Nails\Redirect\Model;
 use Nails\Common\Exception\NailsException;
 use Nails\Common\Exception\ModelException;
 use Nails\Common\Helper\ArrayHelper;
+use Nails\Common\Helper\Form;
 use Nails\Common\Model\Base;
+use Nails\Common\Service\FormValidation;
 use Nails\Common\Service\HttpCodes;
 use Nails\Config;
 use Nails\Redirect\Constants;
@@ -86,9 +88,16 @@ class Redirect extends Base
     {
         $aFields = parent::describeFields($sTable);
 
-        $aFields['old_url']->validation[] = 'required';
-        $aFields['new_url']->validation[] = 'required';
-        $aFields['type']->validation[]    = 'required';
+        $aFields['old_url']
+            ->setType(Form::FIELD_TEXT)
+            ->addValidation(FormValidation::RULE_REQUIRED);
+
+        $aFields['new_url']
+            ->setType(Form::FIELD_TEXT)
+            ->addValidation(FormValidation::RULE_REQUIRED);
+
+        $aFields['type']
+            ->addValidation(FormValidation::RULE_REQUIRED);
 
         foreach ($aFields['type']->options as $k => &$v) {
             $v = sprintf(
