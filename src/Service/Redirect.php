@@ -31,7 +31,8 @@ class Redirect
 
         if (!empty($aResults)) {
 
-            $aResult   = reset($aResults);
+            $aResult = reset($aResults);
+            /** @var Resource\Redirect $oRedirect */
             $oRedirect = Factory::resource('Redirect', Constants::MODULE_SLUG, $aResult);
 
             //  Avoid loops
@@ -67,7 +68,7 @@ class Redirect
      *
      * @return array
      * @throws ConnectionException
-     * @throws \FactoryException
+     * @throws FactoryException
      */
     protected function lookUpRedirects(string $sUrl): array
     {
