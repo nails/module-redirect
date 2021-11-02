@@ -41,11 +41,11 @@ class Sanitise extends Subscription
      *
      * @throws \Exception
      */
-    public function execute(array &$aData, Redirect $oModel): void
+    public function execute(array &$aData, Redirect $oModel, int $iId = null): void
     {
         $this
             ->normaliseUrls($aData)
-            ->deleteObsolete($aData, $oModel)
+            ->deleteObsolete($aData, $oModel, $iId)
             ->detectLoops($aData, $oModel);
     }
 
@@ -81,12 +81,13 @@ class Sanitise extends Subscription
      *
      * @return $this
      */
-    private function deleteObsolete(array $aData, Redirect $oModel): self
+    private function deleteObsolete(array $aData, Redirect $oModel, int $iId = null): self
     {
         if (array_key_exists('old_url', $aData)) {
-            $oModel->deleteWhere([
+            $oModel->deleteWhere(array_filter([
+                $iId ? ['id !=', $iId] : null,
                 ['old_url', $aData['old_url']],
-            ]);
+            ]));
         }
 
         return $this;
