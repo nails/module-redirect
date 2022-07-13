@@ -2,7 +2,6 @@
 
 namespace Nails\Redirect\Resource;
 
-use Nails\Admin\Interfaces\ChangeLog;
 use Nails\Common\Resource\Entity;
 
 /**
@@ -10,7 +9,7 @@ use Nails\Common\Resource\Entity;
  *
  * @package Nails\Redirect\Resource
  */
-class Redirect extends Entity implements ChangeLog
+class Redirect extends Entity
 {
     /** @var string */
     public $old_url;
@@ -20,22 +19,4 @@ class Redirect extends Entity implements ChangeLog
 
     /** @var string */
     public $type;
-
-    // --------------------------------------------------------------------------
-
-    /**
-     *
-     * @return string
-     */
-    public static function getChageLogTypeLabel(): string
-    {
-        return 'HTTP Redirect';
-    }
-
-    // --------------------------------------------------------------------------
-
-    public static function getChageLogTypeUrl(): string
-    {
-        return 'admin/redirect/redirect/index';
-    }
 }
