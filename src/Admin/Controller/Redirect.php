@@ -10,18 +10,19 @@
  * @link
  */
 
-namespace Nails\Admin\Redirect;
+namespace Nails\Redirect\Admin\Controller;
 
 use Nails\Admin\Controller\DefaultController;
 use Nails\Admin\Helper;
+use Nails\Cdn;
 use Nails\Common\Exception\FactoryException;
 use Nails\Common\Exception\NailsException;
 use Nails\Common\Exception\ValidationException;
 use Nails\Common\Helper\ArrayHelper;
-use Nails\Cdn;
 use Nails\Common\Service\Database;
 use Nails\Common\Service\Input;
 use Nails\Factory;
+use Nails\Redirect\Admin\Permission;
 use Nails\Redirect\Constants;
 
 /**
@@ -31,41 +32,39 @@ use Nails\Redirect\Constants;
  */
 class Redirect extends DefaultController
 {
-    const CONFIG_MODEL_NAME           = 'Redirect';
-    const CONFIG_MODEL_PROVIDER       = Constants::MODULE_SLUG;
-    const CONFIG_PERMISSION           = 'redirect:redirect';
-    const CONFIG_SORT_OPTIONS         = [
+    const CONFIG_MODEL_NAME        = 'Redirect';
+    const CONFIG_MODEL_PROVIDER    = Constants::MODULE_SLUG;
+    const CONFIG_SIDEBAR_GROUP     = 'Utilities';
+    const CONFIG_SIDEBAR_FORMAT    = '%s';
+    const CONFIG_SORT_OPTIONS      = [
         'Created'  => 'created',
         'Modified' => 'modified',
         'Old URL'  => 'old_url',
         'New URL'  => 'new_url',
     ];
-    const CONFIG_INDEX_FIELDS         = [
+    const CONFIG_INDEX_FIELDS      = [
         'Old URL'  => 'old_url',
         'New URL'  => 'new_url',
+        'Type'     => 'type',
         'Created'  => 'created',
         'Modified' => 'modified',
     ];
-    const CONFIG_INDEX_HEADER_BUTTONS = [
-        ['admin/redirect/redirect/batch', 'Batch Edit', 'default'],
-        ['admin/redirect/redirect/download', 'Download as CSV', 'default'],
-    ];
+    const CONFIG_PERMISSION_BROWSE = Permission\Browse::class;
+    const CONFIG_PERMISSION_CREATE = Permission\Create::class;
+    const CONFIG_PERMISSION_EDIT   = Permission\Edit::class;
+    const CONFIG_PERMISSION_DELETE = Permission\Delete::class;
 
     // --------------------------------------------------------------------------
 
-    /**
-     * Returns an array of extra permissions for this controller
-     *
-     * @return array
-     */
-    public static function permissions(): array
+    public function __construct()
     {
-        return array_merge(
-            parent::permissions(),
-            [
-                'downlaod' => 'Download all redirects as a CSV',
-            ]
-        );
+        parent::__construct();
+
+        $this->addIndexHeaderButton(self::url('batch'), 'Batch Edit', 'default');
+
+        if (userHasPermission(Permission\Download::class)) {
+            $this->addIndexHeaderButton(self::url('download'), 'Download as CSV', 'default');
+        }
     }
 
     // --------------------------------------------------------------------------
@@ -77,7 +76,7 @@ class Redirect extends DefaultController
      */
     public function batch(): void
     {
-        if (!self::userCan('edit')) {
+        if (!self::isEditButtonEnabled()) {
             unauthorised();
         }
 
@@ -198,15 +197,16 @@ class Redirect extends DefaultController
                 // --------------------------------------------------------------------------
 
                 $this->oUserFeedback->success('Redirects processed successfully.');
-                redirect('admin/redirect/redirect/batch');
+                redirect(Redirect::url('batch'));
 
             } catch (\Exception $e) {
                 $this->oUserFeedback->error($e->getMessage());
             }
         }
 
-        $this->data['page']->title = 'Redirects &rsaquo; Batch Edit';
-        Helper::loadView('batch');
+        $this
+            ->setTitles(['Redirects', 'Batch Edit'])
+            ->loadView('batch');
     }
 
     // --------------------------------------------------------------------------
@@ -216,6 +216,10 @@ class Redirect extends DefaultController
      */
     public function download(): void
     {
+        if (!userHasPermission(Permission\Download::class)) {
+            unauthorised();
+        }
+
         /** @var \Nails\Redirect\Model\Redirect $oModel */
         $oModel = Factory::model('Redirect', Constants::MODULE_SLUG);
         $oQuery = $oModel->getAllRawQuery([
