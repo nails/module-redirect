@@ -7,6 +7,7 @@ parameters:
     bootstrapFiles:
         - constants.php
     scanFiles:
+        - ../vendor/codeigniter/framework/system/helpers/form_helper.php
         - ../vendor/nails/common/helpers/url.php
         - ../vendor/nails/common/src/Common/CodeIgniter/Core/Common.php
-        - ../vendor/codeigniter/framework/system/helpers/form_helper.php
+        - ../vendor/nails/module-admin/helpers/permission.php
