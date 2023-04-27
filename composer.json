@@ -27,12 +27,12 @@
     "prefer-stable": true,
     "require":
     {
-        "nails/common": "dev-develop"
+        "nails/common": "dev-feature/pre-new-admin"
     },
     "require-dev": {
         "phpunit/phpunit": "9.*",
         "phpstan/phpstan": "1.*",
-        "nails/module-admin": "dev-develop"
+        "nails/module-admin": "dev-feature/pre-new-admin"
     },
     "scripts": {
         "test": "./vendor/bin/phpunit",
