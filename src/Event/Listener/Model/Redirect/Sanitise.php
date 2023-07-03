@@ -110,16 +110,15 @@ class Sanitise extends Subscription
 
         do {
 
-            if (!empty($oTarget) && in_array($oTarget->id, $aTrack)) {
-                throw new LoopDetectedException('Redirect loop detected');
-            }
-
             /** @var \Nails\Redirect\Resource\Redirect|null $oTarget */
             $oTarget = $oModel->getFirst([
                 new Where('old_url', $sUrl),
             ]);
 
-            if ($oTarget) {
+            if (!empty($oTarget) && in_array($oTarget->id, $aTrack)) {
+                throw new LoopDetectedException('Redirect loop detected');
+
+            } elseif ($oTarget) {
                 $sUrl     = $oTarget->new_url;
                 $aTrack[] = $oTarget->id;
             }
