@@ -40,6 +40,7 @@ class Redirect extends DefaultController
         'Old URL'  => 'old_url',
         'New URL'  => 'new_url',
     ];
+    const CONFIG_SORT_DIRECTION       = self::SORT_DESCENDING;
     const CONFIG_INDEX_FIELDS         = [
         'Old URL'  => 'old_url',
         'New URL'  => 'new_url',
