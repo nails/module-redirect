@@ -12,14 +12,9 @@
 
 namespace Nails\Redirect\Model;
 
-use Nails\Common\Exception\NailsException;
-use Nails\Common\Exception\ModelException;
-use Nails\Common\Helper\ArrayHelper;
 use Nails\Common\Helper\Form;
 use Nails\Common\Model\Base;
-use Nails\Common\Service\FormValidation;
 use Nails\Common\Service\HttpCodes;
-use Nails\Config;
 use Nails\Redirect\Constants;
 
 /**
@@ -90,22 +85,28 @@ class Redirect extends Base
 
         $aFields['old_url']
             ->setType(Form::FIELD_TEXT)
-            ->addValidation(FormValidation::RULE_REQUIRED);
+            ->setIsRequired(true);
 
         $aFields['new_url']
             ->setType(Form::FIELD_TEXT)
-            ->addValidation(FormValidation::RULE_REQUIRED);
+            ->setIsRequired(true);
 
         $aFields['type']
-            ->addValidation(FormValidation::RULE_REQUIRED);
+            ->setIsRequired(true);
 
-        foreach ($aFields['type']->options as $k => &$v) {
+        $options = $aFields['type']
+            ->getOptions();
+
+        foreach ($options as $k => &$v) {
             $v = sprintf(
                 '%s - %s',
                 $v,
                 HttpCodes::getByCode($v)
             );
         }
+
+        $aFields['type']
+            ->setOptions($options);
 
         return $aFields;
     }
