@@ -41,7 +41,7 @@ class Sanitise extends Subscription
      *
      * @throws \Exception
      */
-    public function execute(array &$aData, Redirect $oModel, int $iId = null): void
+    public function execute(array &$aData, Redirect $oModel, ?int $iId = null): void
     {
         $this
             ->normaliseUrls($aData)
@@ -81,7 +81,7 @@ class Sanitise extends Subscription
      *
      * @return $this
      */
-    private function deleteObsolete(array $aData, Redirect $oModel, int $iId = null): self
+    private function deleteObsolete(array $aData, Redirect $oModel, ?int $iId = null): self
     {
         if (array_key_exists('old_url', $aData)) {
             $oModel->deleteWhere(array_filter([
