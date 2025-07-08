@@ -27,7 +27,9 @@
     "prefer-stable": true,
     "require":
     {
-        "nails/common": "dev-develop"
+        "php": ">=8.0",
+        "nails/common": "dev-develop",
+        "ext-pdo": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "9.*",
