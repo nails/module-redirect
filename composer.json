@@ -33,7 +33,9 @@
     "prefer-stable": true,
     "require":
     {
-        "nails/common": "dev-feature/pre-new-admin"
+        "php": ">=8.0",
+        "nails/common": "dev-feature/pre-new-admin",
+        "ext-pdo": "*"
     },
     "require-dev":
     {

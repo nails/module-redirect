@@ -11,10 +11,12 @@ namespace Nails\Redirect\Event\Listener\System;
 
 use Nails\Common;
 use Nails\Common\Events\Subscription;
+use Nails\Common\Exception\Database\ConnectionException;
 use Nails\Common\Exception\FactoryException;
 use Nails\Common\Exception\ModelException;
 use Nails\Factory;
 use Nails\Redirect\Constants;
+use Nails\Redirect\Service\Redirect;
 
 /**
  * Class Ready
@@ -40,10 +42,11 @@ class Ready extends Subscription
      *
      * @throws FactoryException
      * @throws ModelException
+     * @throws ConnectionException
      */
     public function execute(): void
     {
-        /** @var \Nails\Redirect\Service\Redirect $oService */
+        /** @var Redirect $oService */
         $oService  = Factory::service('Redirect', Constants::MODULE_SLUG);
         $oRedirect = $oService->detectRedirect();
 
