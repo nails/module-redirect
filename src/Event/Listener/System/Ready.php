@@ -48,7 +48,12 @@ class Ready extends Subscription
         $oRedirect = $oService->detectRedirect();
 
         if (!empty($oRedirect)) {
-            redirect($oRedirect->new_url, 'location', $oRedirect->type);
+            redirect(
+                sUrl: $oRedirect->new_url,
+                sMethod: 'location',
+                iHttpResponseCode: $oRedirect->type,
+                bAllowExternal: true
+            );
         }
     }
 }
