@@ -24,11 +24,11 @@ return [
         },
     ],
     'resources' => [
-        'Redirect' => function ($mObj): Resource\Redirect {
+        'Redirect' => function ($resource, $model): Resource\Redirect {
             if (class_exists('\App\Redirect\Resource\Redirect')) {
-                return new \App\Redirect\Resource\Redirect($mObj);
+                return new \App\Redirect\Resource\Redirect($resource, $model);
             } else {
-                return new Resource\Redirect($mObj);
+                return new Resource\Redirect($resource, $model);
             }
         },
     ],
