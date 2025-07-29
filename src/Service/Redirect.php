@@ -9,7 +9,6 @@ use Nails\Common\Service\Input;
 use Nails\Common\Service\PDODatabase;
 use Nails\Factory;
 use Nails\Redirect\Constants;
-use Nails\Redirect\Resource;
 use PDO;
 
 /**
@@ -22,12 +21,12 @@ class Redirect
     /**
      * Determines if a redirect is required
      *
-     * @return Resource\Redirect|null
+     * @return string[]|null
      * @throws ConnectionException
      * @throws FactoryException
      * @throws ModelException
      */
-    public function detectRedirect(): ?Resource\Redirect
+    public function detectRedirect(): ?array
     {
         $sUrl     = $this->detectUrl();
         $aResults = $this->lookUpRedirects($sUrl);
@@ -35,12 +34,10 @@ class Redirect
         if (!empty($aResults)) {
 
             $aResult = reset($aResults);
-            /** @var Resource\Redirect $oRedirect */
-            $oRedirect = Factory::resource('Redirect', Constants::MODULE_SLUG, $aResult);
 
             //  Avoid loops
-            return $sUrl !== $oRedirect->new_url
-                ? $oRedirect
+            return $sUrl !== $aResult['new_url']
+                ? [$aResult['new_url'], $aResult['type']]
                 : null;
         }
 

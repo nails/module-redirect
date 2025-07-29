@@ -48,13 +48,14 @@ class Ready extends Subscription
     {
         /** @var Redirect $oService */
         $oService  = Factory::service('Redirect', Constants::MODULE_SLUG);
-        $oRedirect = $oService->detectRedirect();
+        $aRedirect = $oService->detectRedirect();
 
-        if (!empty($oRedirect)) {
+        if (!empty($aRedirect)) {
+            [$sUrl, $sType] = $aRedirect;
             redirect(
-                sUrl: $oRedirect->new_url,
+                sUrl: $sUrl,
                 sMethod: 'location',
-                iHttpResponseCode: $oRedirect->type,
+                iHttpResponseCode: (int) $sType,
                 bAllowExternal: true
             );
         }
