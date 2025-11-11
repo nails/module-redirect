@@ -9,7 +9,6 @@ namespace Nails\Redirect\Database\Migration;
 
 use Nails\Common\Interfaces;
 use Nails\Common\Traits;
-use Nails\Redirect\Admin\Permission;
 
 /**
  * Class Migration3
@@ -27,6 +26,13 @@ class Migration3 implements Interfaces\Database\Migration
      */
     public function execute(): void
     {
+        /**
+         * Applications moving from `pre-new-admin` to `develop` will be on migration 2. This means that they
+         * * will not run the permission upgrade (migration 2). They WILL have the column changes, however
+         * * (develop: 3, pre-new-admin: 2).
+         *
+         * This migration is safe to run twice
+         */
         $this->query('ALTER TABLE `{{NAILS_DB_PREFIX}}redirect` CHARACTER SET = utf8mb4;');
         $this->query('ALTER TABLE `{{NAILS_DB_PREFIX}}redirect` CHANGE `old_url` `old_url` VARCHAR(500) CHARACTER SET utf8mb4 NULL DEFAULT NULL;');
         $this->query('ALTER TABLE `{{NAILS_DB_PREFIX}}redirect` CHANGE `new_url` `new_url` VARCHAR(500) CHARACTER SET utf8mb4 NULL DEFAULT NULL;');
