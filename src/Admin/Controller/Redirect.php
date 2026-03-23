@@ -109,7 +109,7 @@ class Redirect extends DefaultController
                 //  Validate the contents
                 $iCounter         = 0;
                 $sValidUrlPattern = '/^(https?:\/\/.+|\/.*)$/i';
-                while (($aData = fgetcsv($rFile)) !== false) {
+                while (($aData = fgetcsv($rFile, escape: '')) !== false) {
                     $iCounter++;
                     if (!empty($aData)) {
 
