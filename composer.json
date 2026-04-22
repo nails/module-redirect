@@ -27,7 +27,7 @@
     "prefer-stable": true,
     "require":
     {
-        "php": ">=8.0",
+        "php": ">=8.3",
         "nails/common": "dev-develop",
         "ext-pdo": "*"
     },
