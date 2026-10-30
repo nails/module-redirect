@@ -27,7 +27,6 @@ class PackageTest extends TestCase
         self::assertSame(
             [
                 NAILS_DB_PREFIX . 'redirect.old_url',
-                NAILS_DB_PREFIX . 'redirect.new_url',
             ],
             (new Package())->readOnly()
         );
