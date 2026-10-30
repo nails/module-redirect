@@ -14,8 +14,8 @@ class Package implements Exclusion
     public function readOnly(): array
     {
         return [
+            //  Incoming requests are matched against this.
             NAILS_DB_PREFIX . 'redirect.old_url',
-            NAILS_DB_PREFIX . 'redirect.new_url',
         ];
     }
 }
