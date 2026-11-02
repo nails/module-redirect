@@ -8,7 +8,6 @@ use Nails\FindReplace\Factory\Action;
 use Nails\FindReplace\Factory\Hit;
 use Nails\FindReplace\Factory\Matched;
 use Nails\FindReplace\Interfaces\Resolver;
-use Nails\Redirect\Admin\Controller;
 
 class Redirect implements Resolver
 {
@@ -76,6 +75,6 @@ class Redirect implements Resolver
 
     protected function editUrl(): string
     {
-        return Controller\Redirect::url('edit');
+        return siteUrl('admin/redirect/redirect/edit');
     }
 }
